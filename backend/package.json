@@ -1,0 +1,7 @@
+{
+  "name": "lam-backend",
+  "version": "1.0.0",
+  "description": "Project work",
+  "main": "index.js",
+  "license": "MIT"
+}
