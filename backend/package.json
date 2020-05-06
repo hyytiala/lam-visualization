@@ -3,5 +3,19 @@
   "version": "1.0.0",
   "description": "Project work",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "watch": "nodemon index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "python-shell": "^2.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.3"
+  }
 }
