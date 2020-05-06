@@ -5,15 +5,21 @@ import DatePicker from 'react-datepicker'
 import { Spinner } from 'reactstrap'
 import { PieChart, Pie, Legend, Tooltip, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts'
 
-const getYestarday = (date) => date.setDate(date.getDate() - 1)
+const getYesterday = () => {
+  const date = new Date();
+  date.setHours(date.getHours() - 3)
+  date.setDate(date.getDate() - 1)
+  return date
+}
 
 const parseDate = (date) => {
   const parsed = new Date(date)
   const year = parsed.getFullYear()
-  const start = new Date(year, 0, 0)
-  const diff = parsed - start
-  const oneDay = 1000 * 60 * 60 * 24
-  const day = Math.floor(diff / oneDay)
+  const start = new Date(parsed.getFullYear(), 0, 0);
+  const diff = (parsed - start) + ((start.getTimezoneOffset() - parsed.getTimezoneOffset()) * 60 * 1000);
+  const oneDay = 1000 * 60 * 60 * 24;
+  const day = Math.floor(diff / oneDay);
+  console.log('Day of year: ' + day);
   return [String(year), String(day)]
 }
 
@@ -34,13 +40,13 @@ const CategoryChart = ({ lam, ely, station }) => {
     Busses: '#00C49F'
   }
 
-  const [startDate, setStartDate] = useState(getYestarday(new Date()))
+  const [startDate, setStartDate] = useState(getYesterday())
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
-      const date = getYestarday(new Date())
+      const date = getYesterday()
       const time = parseDate(date)
       try {
         const result = await lamService.getStationData(time[0], ely, String(lam), time[1])
@@ -76,7 +82,7 @@ const CategoryChart = ({ lam, ely, station }) => {
       <DatePicker
         selected={startDate}
         onChange={date => handleDateChange(date)}
-        maxDate={getYestarday(new Date())}
+        maxDate={getYesterday()}
         minDate={new Date('2000-01-01')}
         disabled={loading}
         className={styles.picker}
