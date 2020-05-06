@@ -87,8 +87,8 @@ const CategoryChart = ({ lam, ely, station }) => {
           {data ?
             <>
               <h4 className={styles.title}>Trafic by vehicle type</h4>
-              <PieChart width={650} height={320}>
-                <Pie dataKey="value" isAnimationActive={false} data={data.pie} cx={325} cy={120}
+              <PieChart width={650} height={400}>
+                <Pie dataKey="value" isAnimationActive={false} data={data.pie} cx={325} cy={170}
                   outerRadius={120} fill="#8884d8" label>
                   {
                     data.pie.map((entry, index) => <Cell key={index} fill={COLORS[entry.name]} />)
@@ -98,7 +98,7 @@ const CategoryChart = ({ lam, ely, station }) => {
                 <Legend />
               </PieChart>
               <h4 className={styles.title}>Trafic hourly by direction</h4>
-              <BarChart width={650} height={300} data={data.bar} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <BarChart width={660} height={300} data={data.bar} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
