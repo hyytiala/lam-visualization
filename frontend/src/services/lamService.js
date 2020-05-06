@@ -1,7 +1,6 @@
 import axios from 'axios'
 
-const URL = process.env.PROD === 'true' ? 'https://spotishare.live/lam' : 'http://localhost:3001'
-console.log(URL)
+const URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://spotishare.live'
 
 const getStations = async () => {
   const response = await axios.get('https://tie.digitraffic.fi/api/v3/metadata/tms-stations')
@@ -14,7 +13,7 @@ const getVolume = async () => {
 }
 
 const getStationData = async (year, ely, lam, day) => {
-  const response = await axios.get(`${URL}/api?year=${year}&ely=${ely}&lam=${lam}&day=${day}`)
+  const response = await axios.get(`${URL}/lam/api?year=${year}&ely=${ely}&lam=${lam}&day=${day}`)
   return response.data
 }
 

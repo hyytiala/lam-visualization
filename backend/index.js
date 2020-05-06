@@ -16,7 +16,7 @@ const lamDataRouter = require('./routes/lamData')
 app.use(cors())
 app.use(bodyParser.json())
 
-app.use('/api', lamDataRouter)
+app.use('/lam/api', lamDataRouter)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
