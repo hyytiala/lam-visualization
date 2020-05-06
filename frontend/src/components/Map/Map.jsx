@@ -4,9 +4,11 @@ import styles from './map.module.scss'
 import lamService from '../../services/lamService'
 import iconImage from '../../images/marker-icon.png'
 import MapModal from '../MapModal/MapModal'
+import LoadingModal from '../LoadingModal/LoadingModal'
 
 //const MAP_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 const MAP_URL = 'https://api.mapbox.com/styles/v1/ohyytiala/ck9v3i89k0p431iqlmf9ui05o/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoib2h5eXRpYWxhIiwiYSI6ImNqdGg4aGdlbzBheWw0M282NDV0azJ5cmwifQ.PF1W8LWaCPGjz79qxbv-4Q'
+const ATTRIBUTION = '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 
 const marker = L.Icon.extend({
   options: {
@@ -28,6 +30,7 @@ const Map = () => {
   const stations = useRef(null)
 
   const [modal, setModal] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(false)
 
   const toggle = () => setModal(!modal)
@@ -52,7 +55,7 @@ const Map = () => {
       layers: [
         L.tileLayer(MAP_URL, {
           zIndex: 50,
-          attribution: 'OpenStreet map'
+          attribution: ATTRIBUTION
         })
       ]
     })
@@ -101,6 +104,7 @@ const Map = () => {
           });
         }
       }).addTo(mapRef.current)
+      setLoading(false)
     }
 
     fetchData()
@@ -108,6 +112,7 @@ const Map = () => {
 
   return (
     <div id='map' className={styles.map}>
+      <LoadingModal loading={loading}/>
       <MapModal
         modal={modal}
         toggle={toggle}
