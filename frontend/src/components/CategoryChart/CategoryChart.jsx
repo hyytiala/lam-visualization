@@ -3,7 +3,7 @@ import lamService from '../../services/lamService'
 import styles from './categorychart.module.scss'
 import DatePicker from 'react-datepicker'
 import { Spinner } from 'reactstrap'
-import { PieChart, Pie, Legend, Tooltip, Cell } from 'recharts'
+import { PieChart, Pie, Legend, Tooltip, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts'
 
 const getYestarday = (date) => date.setDate(date.getDate() - 1)
 
@@ -22,7 +22,11 @@ const parseData = (data) => {
   { name: 'Busses', value: data.busses }]
 }
 
-const CategoryChart = ({ lam, ely }) => {
+const parseHourData = (data) => {
+  return data.map((e, i) => ({ name: i + 1, way1: e.way1, way2: e.way2 }))
+}
+
+const CategoryChart = ({ lam, ely, station }) => {
 
   const COLORS = {
     Cars: '#0088FE',
@@ -40,7 +44,9 @@ const CategoryChart = ({ lam, ely }) => {
       const time = parseDate(date)
       try {
         const result = await lamService.getStationData(time[0], ely, String(lam), time[1])
-        setData(parseData(result))
+        const pieData = parseData(result.total)
+        const barData = parseHourData(result.hourly)
+        setData({ pie: pieData, bar: barData })
       } catch (error) {
         setData(null)
       }
@@ -53,14 +59,20 @@ const CategoryChart = ({ lam, ely }) => {
     setStartDate(date)
     setLoading(true)
     const time = parseDate(date)
-    const result = await lamService.getStationData(time[0], ely, String(lam), time[1])
-    setData(parseData(result))
+    try {
+      const result = await lamService.getStationData(time[0], ely, String(lam), time[1])
+      const pieData = parseData(result.total)
+      const barData = parseHourData(result.hourly)
+      setData({ pie: pieData, bar: barData })
+    } catch (error) {
+      setData(null)
+    }
     setLoading(false)
   }
 
   return (
     <div className={styles.container}>
-      <h4 className={styles.title}>Show vehicle data for a day</h4>
+      <h4 className={styles.title}>Select date</h4>
       <DatePicker
         selected={startDate}
         onChange={date => handleDateChange(date)}
@@ -73,15 +85,29 @@ const CategoryChart = ({ lam, ely }) => {
         :
         <div className={styles.dataContent}>
           {data ?
-            <PieChart width={430} height={400}>
-              <Pie dataKey="value" isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={120} fill="#8884d8" label>
-                {
-                  data.map((entry, index) => <Cell key={index} fill={COLORS[entry.name]} />)
-                }
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
+            <>
+              <h4 className={styles.title}>Trafic by vehicle type</h4>
+              <PieChart width={650} height={320}>
+                <Pie dataKey="value" isAnimationActive={false} data={data.pie} cx={325} cy={120}
+                  outerRadius={120} fill="#8884d8" label>
+                  {
+                    data.pie.map((entry, index) => <Cell key={index} fill={COLORS[entry.name]} />)
+                  }
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+              <h4 className={styles.title}>Trafic hourly by direction</h4>
+              <BarChart width={650} height={300} data={data.bar} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="way1" fill="#8884d8" name={`to ${station.properties.direction1Municipality}`} />
+                <Bar dataKey="way2" fill="#82ca9d" name={`to ${station.properties.direction2Municipality}`} />
+              </BarChart>
+            </>
             :
             <p>No data for selected date</p>
           }

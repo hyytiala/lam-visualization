@@ -86,7 +86,13 @@ const MapModal = ({ modal, toggle, station }) => {
           <TabPane tabId="2">
             <Row>
               <Col sm="12">
-                {modal && <CategoryChart lam={station.properties.tmsNumber} ely={getElyNumber(station.properties.provinceCode)} />}
+                {modal && 
+                <CategoryChart 
+                lam={station.properties.tmsNumber} 
+                ely={getElyNumber(station.properties.provinceCode)} 
+                station={station}
+                />
+                }
               </Col>
             </Row>
           </TabPane>

@@ -48,12 +48,21 @@ const mock = {
     repairMaintenanceTime: null,
     roadAddress: { roadNumber: 4, roadSection: 106, distanceFromRoadSectionStart: 2059, carriagewayCode: 2, roadMaintenanceClass: "1" },
     roadStationId: 23008,
-    sensorData: 1934,
     startTime: "2017-09-18T00:00:00Z",
     state: "OK",
     stationSensors: [5054, 5055, 5056, 5057, 5058, 5061, 5064, 5067, 5068, 5071, 5116, 5119, 5122, 5125, 5158, 5161, 5164, 5168],
     tmsNumber: 8,
     tmsStationType: "DSL_4",
+    speed: {
+      way1: 10,
+      way2: 10,
+      total: 10
+    },
+    passes: {
+      way1: 10,
+      way2: 10,
+      total: 10
+    }
   }
 }
 

@@ -3,12 +3,20 @@
   flex-direction: column;
   align-items: center;
   min-height: 522px;
+
 }
 
 .title {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 .picker {
   margin-bottom: 2rem;
+}
+
+.dataContent {
+  h4 {
+    margin-top: 2rem;
+  }
 }
