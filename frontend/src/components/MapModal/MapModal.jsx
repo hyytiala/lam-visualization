@@ -4,6 +4,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter, TabContent, TabPane
 import classnames from 'classnames'
 
 import CategoryChart from '../CategoryChart/CategoryChart'
+import DataTable from '../DataTable/DataTable'
 
 const MapModal = ({ modal, toggle, station }) => {
 
@@ -78,8 +79,7 @@ const MapModal = ({ modal, toggle, station }) => {
                 <p>Province: {modal && station.properties.province}</p>
                 <p>Road number: {modal && station.properties.roadAddress.roadNumber}</p>
                 <h4>Station data for latest hour</h4>
-                <p>Hourly passes: {modal && station.properties.passes} vehicles/h</p>
-                <p>Hourly average speed: {modal && station.properties.speed} km/h</p>
+                <DataTable data={station.properties}/>
               </Col>
             </Row>
           </TabPane>

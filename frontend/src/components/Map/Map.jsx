@@ -105,10 +105,16 @@ const Map = () => {
           const way2 = sensor.sensorValues.filter(v => v.name === 'OHITUKSET_60MIN_KIINTEA_SUUNTA2')[0]
           const avg1 = sensor.sensorValues.filter(v => v.name === 'KESKINOPEUS_60MIN_KIINTEA_SUUNTA1')[0]
           const avg2 = sensor.sensorValues.filter(v => v.name === 'KESKINOPEUS_60MIN_KIINTEA_SUUNTA2')[0]
-          const passValue = (way1 && way2) ? way1.sensorValue + way1.sensorValue : 0
-          const speedValue = (avg1 && avg2) ? (avg1.sensorValue + avg2.sensorValue) / 2 : 0
-          feature.properties.passes = passValue
-          feature.properties.speed = speedValue
+          feature.properties.passes = {
+            way1: way1 ? way1.sensorValue : -1,
+            way2: way2 ? way2.sensorValue : -1,
+            total: (way1 && way2) ? way1.sensorValue + way1.sensorValue : -1
+          }
+          feature.properties.speed = {
+            way1: avg1 ? avg1.sensorValue : -1,
+            way2: avg2 ? avg2.sensorValue : -1,
+            total: (avg1 && avg2) ? (avg1.sensorValue + avg2.sensorValue) / 2 : -1
+          }
           layer.on('click', (e) => {
             setSelected(feature)
             setModal(true)

@@ -24,10 +24,11 @@ const parseData = (data) => {
 
 const CategoryChart = ({ lam, ely }) => {
 
-  const data01 = [{ name: 'Cars', value: 400 }, { name: 'Trucks', value: 300 },
-  { name: 'Busses', value: 300 }]
-
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28']
+  const COLORS = {
+    Cars: '#0088FE',
+    Trucks: '#FFBB28',
+    Busses: '#00C49F'
+  }
 
   const [startDate, setStartDate] = useState(getYestarday(new Date()))
   const [loading, setLoading] = useState(true)
@@ -75,7 +76,7 @@ const CategoryChart = ({ lam, ely }) => {
             <PieChart width={430} height={400}>
               <Pie dataKey="value" isAnimationActive={false} data={data} cx={200} cy={200} outerRadius={120} fill="#8884d8" label>
                 {
-                  data.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]} />)
+                  data.map((entry, index) => <Cell key={index} fill={COLORS[entry.name]} />)
                 }
               </Pie>
               <Tooltip />
