@@ -8,7 +8,7 @@ import DataTable from '../DataTable/DataTable'
 
 const MapModal = ({ modal, toggle, station }) => {
 
-  const [activeTab, setActiveTab] = useState('1')
+  const [activeTab, setActiveTab] = useState('2')
 
   const toggleTab = tab => {
     if (activeTab !== tab) setActiveTab(tab)
@@ -51,7 +51,7 @@ const MapModal = ({ modal, toggle, station }) => {
   return (
     <Modal isOpen={modal} toggle={toggle}>
       <ModalHeader toggle={toggle}>{modal && station.properties.names.en}</ModalHeader>
-      <ModalBody>
+      <ModalBody style={{minHeight: '720px'}}>
         <Nav tabs>
           <NavItem>
             <NavLink

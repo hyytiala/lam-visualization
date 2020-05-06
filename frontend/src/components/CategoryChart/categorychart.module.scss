@@ -16,6 +16,14 @@
 }
 
 .dataContent {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+
+  .bar {
+    flex-grow: 2;
+  }
+
   h4 {
     margin-top: 2rem;
   }

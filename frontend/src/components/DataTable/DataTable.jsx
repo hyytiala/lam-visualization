@@ -14,13 +14,13 @@ const DataTable = ({ data }) => {
       </thead>
       <tbody>
         <tr>
-          <th scope="row">amount</th>
+          <th scope="row">amount of vehicles</th>
           <td>{data.passes.way1}</td>
           <td>{data.passes.way2}</td>
           <td>{data.passes.total}</td>
         </tr>
         <tr>
-          <th scope="row">avg. speed</th>
+          <th scope="row">average speed</th>
           <td>{data.speed.way1} km/h</td>
           <td>{data.speed.way2} km/h</td>
           <td>{data.speed.total} km/h</td>
