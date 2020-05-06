@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Spinner } from 'reactstrap'
+import { Modal, Spinner } from 'reactstrap'
 import styles from './loadingmodal.module.scss'
 
 const LoadingModal = ({ loading }) => {

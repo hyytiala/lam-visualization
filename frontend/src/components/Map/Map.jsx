@@ -24,6 +24,39 @@ const marker = L.Icon.extend({
   }
 })
 
+const mock = {
+  id: 23008,
+  properties: {
+    annualMaintenanceTime: null,
+    calculatorDeviceType: null,
+    collectionInterval: 300,
+    collectionStatus: "GATHERING",
+    coordinatesETRS89: (3)[396062, 6693224, 0],
+    country: null,
+    direction1Municipality: "Lahti",
+    direction1MunicipalityCode: 398,
+    direction2Municipality: "Helsinki",
+    direction2MunicipalityCode: 91,
+    liviId: "LAMM1062",
+    municipality: "Vantaa",
+    municipalityCode: "92",
+    name: "vt4_Kerava_Jokivarsi",
+    names: { fi: "Tie 4 Kerava, Jokivarsi", sv: "Väg 4 Kervo, Jokivarsi", en: "Road 4 Kerava, Jokivarsi" },
+    province: "Uusimaa",
+    provinceCode: "1",
+    purpose: "ajantasa",
+    repairMaintenanceTime: null,
+    roadAddress: { roadNumber: 4, roadSection: 106, distanceFromRoadSectionStart: 2059, carriagewayCode: 2, roadMaintenanceClass: "1" },
+    roadStationId: 23008,
+    sensorData: 1934,
+    startTime: "2017-09-18T00:00:00Z",
+    state: "OK",
+    stationSensors: [5054, 5055, 5056, 5057, 5058, 5061, 5064, 5067, 5068, 5071, 5116, 5119, 5122, 5125, 5158, 5161, 5164, 5168],
+    tmsNumber: 8,
+    tmsStationType: "DSL_4",
+  }
+}
+
 const Map = () => {
 
   const mapRef = useRef(null)
@@ -89,7 +122,6 @@ const Map = () => {
           const OldRange = 5000 - 1
           const NewRange = 20 - 5
           const NewValue = Math.round((((value - 1) * NewRange) / OldRange) + 5)
-          console.log(NewValue)
           return L.circleMarker(latlng, {
             // Stroke properties
             color: '#5EA4D4',
@@ -112,7 +144,7 @@ const Map = () => {
 
   return (
     <div id='map' className={styles.map}>
-      <LoadingModal loading={loading}/>
+      <LoadingModal loading={loading} />
       <MapModal
         modal={modal}
         toggle={toggle}

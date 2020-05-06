@@ -10,7 +10,13 @@ const getVolume = async () => {
   return response.data
 }
 
+const getStationData = async (year, ely, lam, day) => {
+  const response = await axios.get(`http://localhost:3001/api?year=${year}&ely=${ely}&lam=${lam}&day=${day}`)
+  return response.data
+}
+
 export default {
   getStations,
-  getVolume
+  getVolume,
+  getStationData
 }
