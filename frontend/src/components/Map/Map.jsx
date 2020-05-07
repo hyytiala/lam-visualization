@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
-import L from 'leaflet'
+import L, { latLng } from 'leaflet'
 import 'leaflet.markercluster'
+import 'leaflet.heat'
 import styles from './map.module.scss'
 import lamService from '../../services/lamService'
 import iconImage from '../../images/marker-icon.png'
@@ -59,6 +60,7 @@ const Map = () => {
   const mapRef = useRef(null)
   const stations = useRef(null)
   const cluster = useRef(null)
+  const heatmap = useRef(null)
 
   const [modal, setModal] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -67,15 +69,22 @@ const Map = () => {
   const toggle = () => setModal(!modal)
 
   useEffect(() => {
-    delete L.Icon.Default.prototype._getIconUrl;
-
+    delete L.Icon.Default.prototype._getIconUrl
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
       iconUrl: require('leaflet/dist/images/marker-icon.png'),
       shadowUrl: require('leaflet/dist/images/marker-shadow.png')
     })
-    stations.current = new L.FeatureGroup()
+    stations.current = new L.LayerGroup()
+    heatmap.current = new L.LayerGroup()
     cluster.current = L.markerClusterGroup()
+    const layer = L.tileLayer(MAP_URL, {
+      zIndex: 50,
+      attribution: ATTRIBUTION
+    })
+    const overlayMaps = {
+      "Heatmap": heatmap.current
+    }
     mapRef.current = L.map('map', {
       center: [65.4536, 26.4440],
       zoom: 6,
@@ -89,15 +98,14 @@ const Map = () => {
       fadeAnimation: false,
       zoomControl: true,
       maxBoundsViscosity: 1.0,
-      layers: [
-        L.tileLayer(MAP_URL, {
-          zIndex: 50,
-          attribution: ATTRIBUTION
-        })
-      ]
+      layers: layer
     })
+
+    L.control.layers(null, overlayMaps, { collapsed: false }).addTo(mapRef.current)
+
     window.map = mapRef.current
     const fetchData = async () => {
+      const heatLayer = []
       const result = await lamService.getStations()
       const data = await lamService.getVolume()
       cluster.current.addLayer(L.geoJSON(result, {
@@ -130,9 +138,10 @@ const Map = () => {
           const way1 = sensor.sensorValues.filter(v => v.name === 'OHITUKSET_60MIN_KIINTEA_SUUNTA1')[0]
           const way2 = sensor.sensorValues.filter(v => v.name === 'OHITUKSET_60MIN_KIINTEA_SUUNTA2')[0]
           const value = (way1 && way2) ? way1.sensorValue + way1.sensorValue : 0
-          const OldRange = 5000 - 1
-          const NewRange = 25 - 7
-          const NewValue = Math.round((((value - 1) * NewRange) / OldRange) + 7)
+          const OldRange = 6000 - 1
+          const NewRange = 2000 - 1
+          const NewValue = ((((value - 1) * NewRange) / OldRange) + 1).toFixed(4)
+          heatLayer.push([latlng.lat, latlng.lng, NewValue])
           /* return L.circleMarker(latlng, {
             // Stroke properties
             color: '#5EA4D4',
@@ -148,6 +157,8 @@ const Map = () => {
           return L.marker(latlng)
         }
       })).addTo(mapRef.current)
+      heatmap.current.addLayer(L.heatLayer(heatLayer, { radius: 20, blur: 30, max: 1 }))
+      console.log(heatLayer)
       setLoading(false)
     }
 
