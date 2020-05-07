@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import 'leaflet/dist/leaflet.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import "react-datepicker/dist/react-datepicker.css";
 import './index.css'

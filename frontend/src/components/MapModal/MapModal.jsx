@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styles from './mapmodal.module.scss'
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap'
+import { Modal, ModalHeader, ModalBody, TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap'
 import classnames from 'classnames'
 
 import CategoryChart from '../CategoryChart/CategoryChart'

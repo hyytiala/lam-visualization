@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
+import 'leaflet.markercluster'
 import styles from './map.module.scss'
 import lamService from '../../services/lamService'
 import iconImage from '../../images/marker-icon.png'
@@ -10,19 +11,6 @@ import LoadingModal from '../LoadingModal/LoadingModal'
 const MAP_URL = 'https://api.mapbox.com/styles/v1/ohyytiala/ck9v3i89k0p431iqlmf9ui05o/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoib2h5eXRpYWxhIiwiYSI6ImNqdGg4aGdlbzBheWw0M282NDV0azJ5cmwifQ.PF1W8LWaCPGjz79qxbv-4Q'
 const ATTRIBUTION = '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 
-const marker = L.Icon.extend({
-  options: {
-    iconUrl: iconImage,
-    iconRetinaUrl: null,
-    iconAnchor: null,
-    popupAnchor: null,
-    shadowUrl: null,
-    shadowSize: null,
-    shadowAnchor: null,
-    iconSize: new L.Point(60, 75),
-    className: 'leaflet-div-icon'
-  }
-})
 
 const mock = {
   id: 23008,
@@ -55,13 +43,13 @@ const mock = {
     tmsStationType: "DSL_4",
     speed: {
       way1: 10,
-      way2: 10,
-      total: 10
+      way2: 20,
+      total: 30
     },
     passes: {
       way1: 10,
-      way2: 10,
-      total: 10
+      way2: 20,
+      total: 30
     }
   }
 }
@@ -70,6 +58,7 @@ const Map = () => {
 
   const mapRef = useRef(null)
   const stations = useRef(null)
+  const cluster = useRef(null)
 
   const [modal, setModal] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -78,19 +67,25 @@ const Map = () => {
   const toggle = () => setModal(!modal)
 
   useEffect(() => {
+    delete L.Icon.Default.prototype._getIconUrl;
+
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+      iconUrl: require('leaflet/dist/images/marker-icon.png'),
+      shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+    })
     stations.current = new L.FeatureGroup()
-    L.Icon.Default = marker
+    cluster.current = L.markerClusterGroup()
     mapRef.current = L.map('map', {
-      center: [60.2908, 24.5324],
-      zoom: 9,
+      center: [65.4536, 26.4440],
+      zoom: 6,
       maxBounds: [
-        [82.80, -1000],
-        [-82.86, 1000]
+        [71.84, 53.15],
+        [54.77, 1.80]
       ],
-      maxZoom: 18,
-      minZoom: 3,
+      maxZoom: 19,
+      minZoom: 6,
       preferCanvas: true,
-      worldCopyJump: true,
       fadeAnimation: false,
       zoomControl: true,
       maxBoundsViscosity: 1.0,
@@ -101,10 +96,11 @@ const Map = () => {
         })
       ]
     })
+    window.map = mapRef.current
     const fetchData = async () => {
       const result = await lamService.getStations()
       const data = await lamService.getVolume()
-      L.geoJSON(result, {
+      cluster.current.addLayer(L.geoJSON(result, {
         style: {
           color: '#333'
         },
@@ -135,9 +131,9 @@ const Map = () => {
           const way2 = sensor.sensorValues.filter(v => v.name === 'OHITUKSET_60MIN_KIINTEA_SUUNTA2')[0]
           const value = (way1 && way2) ? way1.sensorValue + way1.sensorValue : 0
           const OldRange = 5000 - 1
-          const NewRange = 20 - 5
-          const NewValue = Math.round((((value - 1) * NewRange) / OldRange) + 5)
-          return L.circleMarker(latlng, {
+          const NewRange = 25 - 7
+          const NewValue = Math.round((((value - 1) * NewRange) / OldRange) + 7)
+          /* return L.circleMarker(latlng, {
             // Stroke properties
             color: '#5EA4D4',
             opacity: 0.75,
@@ -148,9 +144,10 @@ const Map = () => {
             fillOpacity: 0.25,
 
             radius: NewValue
-          });
+          }); */
+          return L.marker(latlng)
         }
-      }).addTo(mapRef.current)
+      })).addTo(mapRef.current)
       setLoading(false)
     }
 
@@ -167,6 +164,17 @@ const Map = () => {
       />
     </div>
   )
+
+  /* return (
+    <div id='map' className={styles.map}>
+      <LoadingModal loading={false} />
+      <MapModal
+        modal={true}
+        toggle={toggle}
+        station={mock}
+      />
+    </div>
+  ) */
 }
 
 export default Map

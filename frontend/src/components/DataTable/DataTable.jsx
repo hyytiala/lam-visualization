@@ -7,22 +7,24 @@ const DataTable = ({ data }) => {
       <thead>
         <tr>
           <th>Direction:</th>
-          <th>to {data.direction1Municipality}</th>
-          <th>to {data.direction2Municipality}</th>
-          <th>total</th>
+          <th>vehicles</th>
+          <th>average speed</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <th scope="row">amount of vehicles</th>
+          <th scope="row">to {data.direction1Municipality || 'Way 1'}</th>
           <td>{data.passes.way1}</td>
-          <td>{data.passes.way2}</td>
-          <td>{data.passes.total}</td>
+          <td>{data.speed.way1} km/h</td>
         </tr>
         <tr>
-          <th scope="row">average speed</th>
-          <td>{data.speed.way1} km/h</td>
+          <th scope="row">to {data.direction2Municipality || 'Way 2'}</th>
+          <td>{data.passes.way2}</td>
           <td>{data.speed.way2} km/h</td>
+        </tr>
+        <tr>
+          <th scope="row">total</th>
+          <td>{data.passes.total}</td>
           <td>{data.speed.total} km/h</td>
         </tr>
       </tbody>

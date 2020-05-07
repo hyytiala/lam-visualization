@@ -8,3 +8,6 @@
     margin: 1.75rem auto;
   }
 }
+
+@media (max-width: 768px) {
+}
