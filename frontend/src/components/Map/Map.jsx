@@ -64,6 +64,7 @@ const Map = () => {
 
   const [modal, setModal] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [selected, setSelected] = useState(false)
 
   const toggle = () => setModal(!modal)
@@ -92,7 +93,7 @@ const Map = () => {
         [71.84, 53.15],
         [54.77, 1.80]
       ],
-      maxZoom: 19,
+      maxZoom: 18,
       minZoom: 6,
       preferCanvas: true,
       fadeAnimation: false,
@@ -106,68 +107,70 @@ const Map = () => {
     window.map = mapRef.current
     const fetchData = async () => {
       const heatLayer = []
-      const result = await lamService.getStations()
-      const data = await lamService.getVolume()
-      cluster.current.addLayer(L.geoJSON(result, {
-        style: {
-          color: '#333'
-        },
-        onEachFeature: function (feature, layer) {
-          const sensor = data.tmsStations.filter(s => s.id === feature.id)[0]
-          const way1 = sensor.sensorValues.filter(v => v.name === 'OHITUKSET_60MIN_KIINTEA_SUUNTA1')[0]
-          const way2 = sensor.sensorValues.filter(v => v.name === 'OHITUKSET_60MIN_KIINTEA_SUUNTA2')[0]
-          const avg1 = sensor.sensorValues.filter(v => v.name === 'KESKINOPEUS_60MIN_KIINTEA_SUUNTA1')[0]
-          const avg2 = sensor.sensorValues.filter(v => v.name === 'KESKINOPEUS_60MIN_KIINTEA_SUUNTA2')[0]
-          feature.properties.passes = {
-            way1: way1 ? way1.sensorValue : -1,
-            way2: way2 ? way2.sensorValue : -1,
-            total: (way1 && way2) ? way1.sensorValue + way1.sensorValue : -1
+      try {
+        const result = await lamService.getStations()
+        const data = await lamService.getVolume()
+        cluster.current.addLayer(L.geoJSON(result, {
+          style: {
+            color: '#333'
+          },
+          onEachFeature: function (feature, layer) {
+            const sensor = data.tmsStations.filter(s => s.id === feature.id)[0]
+            const way1 = sensor.sensorValues.filter(v => v.name === 'OHITUKSET_60MIN_KIINTEA_SUUNTA1')[0]
+            const way2 = sensor.sensorValues.filter(v => v.name === 'OHITUKSET_60MIN_KIINTEA_SUUNTA2')[0]
+            const avg1 = sensor.sensorValues.filter(v => v.name === 'KESKINOPEUS_60MIN_KIINTEA_SUUNTA1')[0]
+            const avg2 = sensor.sensorValues.filter(v => v.name === 'KESKINOPEUS_60MIN_KIINTEA_SUUNTA2')[0]
+            feature.properties.passes = {
+              way1: way1 ? way1.sensorValue : -1,
+              way2: way2 ? way2.sensorValue : -1,
+              total: (way1 && way2) ? way1.sensorValue + way1.sensorValue : -1
+            }
+            feature.properties.speed = {
+              way1: avg1 ? avg1.sensorValue : -1,
+              way2: avg2 ? avg2.sensorValue : -1,
+              total: (avg1 && avg2) ? (avg1.sensorValue + avg2.sensorValue) / 2 : -1
+            }
+            layer.on('click', (e) => {
+              setSelected(feature)
+              setModal(true)
+            })
+          },
+          pointToLayer: function (feature, latlng) {
+            const sensor = data.tmsStations.filter(s => s.id === feature.id)[0]
+            const way1 = sensor.sensorValues.filter(v => v.name === 'OHITUKSET_60MIN_KIINTEA_SUUNTA1')[0]
+            const way2 = sensor.sensorValues.filter(v => v.name === 'OHITUKSET_60MIN_KIINTEA_SUUNTA2')[0]
+            const value = (way1 && way2) ? way1.sensorValue + way1.sensorValue : 0
+            const OldRange = 6000 - 1
+            const NewRange = 2000 - 1
+            const NewValue = ((((value - 1) * NewRange) / OldRange) + 1).toFixed(4)
+            heatLayer.push([latlng.lat, latlng.lng, NewValue])
+            /* return L.circleMarker(latlng, {
+              // Stroke properties
+              color: '#5EA4D4',
+              opacity: 0.75,
+              weight: 2,
+  
+              // Fill properties
+              fillColor: '#5EA4D4',
+              fillOpacity: 0.25,
+  
+              radius: NewValue
+            }); */
+            return L.marker(latlng)
           }
-          feature.properties.speed = {
-            way1: avg1 ? avg1.sensorValue : -1,
-            way2: avg2 ? avg2.sensorValue : -1,
-            total: (avg1 && avg2) ? (avg1.sensorValue + avg2.sensorValue) / 2 : -1
-          }
-          layer.on('click', (e) => {
-            setSelected(feature)
-            setModal(true)
-          })
-        },
-        pointToLayer: function (feature, latlng) {
-          const sensor = data.tmsStations.filter(s => s.id === feature.id)[0]
-          const way1 = sensor.sensorValues.filter(v => v.name === 'OHITUKSET_60MIN_KIINTEA_SUUNTA1')[0]
-          const way2 = sensor.sensorValues.filter(v => v.name === 'OHITUKSET_60MIN_KIINTEA_SUUNTA2')[0]
-          const value = (way1 && way2) ? way1.sensorValue + way1.sensorValue : 0
-          const OldRange = 6000 - 1
-          const NewRange = 2000 - 1
-          const NewValue = ((((value - 1) * NewRange) / OldRange) + 1).toFixed(4)
-          heatLayer.push([latlng.lat, latlng.lng, NewValue])
-          /* return L.circleMarker(latlng, {
-            // Stroke properties
-            color: '#5EA4D4',
-            opacity: 0.75,
-            weight: 2,
-
-            // Fill properties
-            fillColor: '#5EA4D4',
-            fillOpacity: 0.25,
-
-            radius: NewValue
-          }); */
-          return L.marker(latlng)
-        }
-      })).addTo(mapRef.current)
-      heatmap.current.addLayer(L.heatLayer(heatLayer, { radius: 20, blur: 30, max: 1 }))
-      console.log(heatLayer)
-      setLoading(false)
+        })).addTo(mapRef.current)
+        heatmap.current.addLayer(L.heatLayer(heatLayer, { radius: 20, blur: 30, max: 1 }))
+        setLoading(false)
+      } catch (error) {
+        setError(true)
+      }
     }
-
     fetchData()
   }, [mapRef])
 
   return (
     <div id='map' className={styles.map}>
-      <LoadingModal loading={loading} />
+      <LoadingModal loading={loading} error={error} />
       <MapModal
         modal={modal}
         toggle={toggle}

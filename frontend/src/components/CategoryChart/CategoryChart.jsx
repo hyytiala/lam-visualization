@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import lamService from '../../services/lamService'
 import styles from './categorychart.module.scss'
-import DatePicker from 'react-datepicker'
+import DatePicker, { registerLocale } from 'react-datepicker'
+import el from "date-fns/locale/en-GB"
 import { Spinner, Container, Row, Col } from 'reactstrap'
 import { PieChart, Pie, Legend, Tooltip, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts'
 
@@ -27,7 +28,7 @@ const getPieWidth = () => window.innerWidth > 500 ? 400 : window.innerWidth - 50
 const getPieRadius = () => window.innerWidth > 500 ? 120 : 90
 
 const parseData = (data) => {
-  return [{ name: 'Cars', value: data.cars }, { name: 'Trucks', value: data.trucks },
+  return [{ name: 'Cars', value: data.cars, total: data.total }, { name: 'Trucks', value: data.trucks },
   { name: 'Busses', value: data.busses }]
 }
 
@@ -79,12 +80,14 @@ const CategoryChart = ({ lam, ely, station }) => {
     }
     setLoading(false)
   }
-
+  registerLocale("en-GB", el)
   return (
     <div className={styles.container}>
       <h4 className={styles.title}>Select date</h4>
       <DatePicker
         selected={startDate}
+        dateFormat="dd.MM.yyyy"
+        locale="en-GB"
         onChange={date => handleDateChange(date)}
         maxDate={getYesterday()}
         minDate={new Date('2000-01-01')}
@@ -97,6 +100,7 @@ const CategoryChart = ({ lam, ely, station }) => {
           {data ? <>
             <div>
               <h4 className={styles.title}>Traffic by vehicle type</h4>
+          <p>Total: {data.pie[0].total} vehicles</p>
               <PieChart width={getPieWidth()} height={400} style={{ margin: 'auto' }} >
                 <Pie dataKey="value" isAnimationActive={false} data={data.pie}
                   outerRadius={getPieRadius()} fill="#8884d8" label>
