@@ -8,52 +8,8 @@ import iconImage from '../../images/marker-icon.png'
 import MapModal from '../MapModal/MapModal'
 import LoadingModal from '../LoadingModal/LoadingModal'
 
-//const MAP_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 const MAP_URL = 'https://api.mapbox.com/styles/v1/ohyytiala/ck9v3i89k0p431iqlmf9ui05o/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoib2h5eXRpYWxhIiwiYSI6ImNqdGg4aGdlbzBheWw0M282NDV0azJ5cmwifQ.PF1W8LWaCPGjz79qxbv-4Q'
 const ATTRIBUTION = '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-
-
-const mock = {
-  id: 23008,
-  properties: {
-    annualMaintenanceTime: null,
-    calculatorDeviceType: null,
-    collectionInterval: 300,
-    collectionStatus: "GATHERING",
-    coordinatesETRS89: (3)[396062, 6693224, 0],
-    country: null,
-    direction1Municipality: "Lahti",
-    direction1MunicipalityCode: 398,
-    direction2Municipality: "Helsinki",
-    direction2MunicipalityCode: 91,
-    liviId: "LAMM1062",
-    municipality: "Vantaa",
-    municipalityCode: "92",
-    name: "vt4_Kerava_Jokivarsi",
-    names: { fi: "Tie 4 Kerava, Jokivarsi", sv: "Väg 4 Kervo, Jokivarsi", en: "Road 4 Kerava, Jokivarsi" },
-    province: "Uusimaa",
-    provinceCode: "1",
-    purpose: "ajantasa",
-    repairMaintenanceTime: null,
-    roadAddress: { roadNumber: 4, roadSection: 106, distanceFromRoadSectionStart: 2059, carriagewayCode: 2, roadMaintenanceClass: "1" },
-    roadStationId: 23008,
-    startTime: "2017-09-18T00:00:00Z",
-    state: "OK",
-    stationSensors: [5054, 5055, 5056, 5057, 5058, 5061, 5064, 5067, 5068, 5071, 5116, 5119, 5122, 5125, 5158, 5161, 5164, 5168],
-    tmsNumber: 8,
-    tmsStationType: "DSL_4",
-    speed: {
-      way1: 10,
-      way2: 20,
-      total: 30
-    },
-    passes: {
-      way1: 10,
-      way2: 20,
-      total: 30
-    }
-  }
-}
 
 const Map = () => {
 
@@ -144,18 +100,6 @@ const Map = () => {
             const NewRange = 2000 - 1
             const NewValue = ((((value - 1) * NewRange) / OldRange) + 1).toFixed(4)
             heatLayer.push([latlng.lat, latlng.lng, NewValue])
-            /* return L.circleMarker(latlng, {
-              // Stroke properties
-              color: '#5EA4D4',
-              opacity: 0.75,
-              weight: 2,
-  
-              // Fill properties
-              fillColor: '#5EA4D4',
-              fillOpacity: 0.25,
-  
-              radius: NewValue
-            }); */
             return L.marker(latlng)
           }
         })).addTo(mapRef.current)
@@ -178,17 +122,6 @@ const Map = () => {
       />
     </div>
   )
-
-  /* return (
-    <div id='map' className={styles.map}>
-      <LoadingModal loading={false} />
-      <MapModal
-        modal={true}
-        toggle={toggle}
-        station={mock}
-      />
-    </div>
-  ) */
 }
 
 export default Map
