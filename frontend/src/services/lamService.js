@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://spotishare.live'
+const URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://app.hyytiala.fi'
 
 const getStations = async () => {
   const response = await axios.get('https://tie.digitraffic.fi/api/v3/metadata/tms-stations')
