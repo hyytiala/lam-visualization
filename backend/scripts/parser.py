@@ -7,7 +7,7 @@ import json
 
 def hourlist(data):
   list=[]
-  for x in range(23):
+  for x in range(24):
     hour1 = valid.loc[(valid[3] == x) & (valid[9] == 1)]
     hour2 = valid.loc[(valid[3] == x) & (valid[9] == 2)]
     result = {

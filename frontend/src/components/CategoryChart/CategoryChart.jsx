@@ -3,7 +3,7 @@ import lamService from '../../services/lamService'
 import styles from './categorychart.module.scss'
 import DatePicker, { registerLocale } from 'react-datepicker'
 import el from "date-fns/locale/en-GB"
-import { Spinner, Container, Row, Col } from 'reactstrap'
+import { Spinner } from 'reactstrap'
 import { PieChart, Pie, Legend, Tooltip, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts'
 
 const getYesterday = () => {
@@ -33,7 +33,7 @@ const parseData = (data) => {
 }
 
 const parseHourData = (data) => {
-  return data.map((e, i) => ({ name: i + 1, way1: e.way1, way2: e.way2 }))
+  return data.map((e, i) => ({ name: i, way1: e.way1, way2: e.way2 }))
 }
 
 const CategoryChart = ({ lam, ely, station }) => {

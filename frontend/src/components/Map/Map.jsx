@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
-import L, { latLng } from 'leaflet'
+import L from 'leaflet'
 import 'leaflet.markercluster'
 import 'leaflet.heat'
 import styles from './map.module.scss'
 import lamService from '../../services/lamService'
-import iconImage from '../../images/marker-icon.png'
 import MapModal from '../MapModal/MapModal'
 import LoadingModal from '../LoadingModal/LoadingModal'
 
