@@ -49,7 +49,6 @@ const CategoryChart = ({ lam, ely, station }) => {
   const [data, setData] = useState(null)
 
   useEffect(() => {
-    console.log(window.innerWidth)
     const fetchData = async () => {
       const date = getYesterday()
       const time = parseDate(date)

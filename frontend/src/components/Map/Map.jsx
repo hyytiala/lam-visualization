@@ -6,6 +6,9 @@ import styles from './map.module.scss'
 import lamService from '../../services/lamService'
 import MapModal from '../MapModal/MapModal'
 import LoadingModal from '../LoadingModal/LoadingModal'
+import icon from 'leaflet/dist/images/marker-icon.png'
+import retinaIcon from 'leaflet/dist/images/marker-icon-2x.png'
+import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 
 const MAP_URL = 'https://api.mapbox.com/styles/v1/ohyytiala/ck9v3i89k0p431iqlmf9ui05o/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoib2h5eXRpYWxhIiwiYSI6ImNqdGg4aGdlbzBheWw0M282NDV0azJ5cmwifQ.PF1W8LWaCPGjz79qxbv-4Q'
 const ATTRIBUTION = '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -27,9 +30,9 @@ const Map = () => {
   useEffect(() => {
     delete L.Icon.Default.prototype._getIconUrl
     L.Icon.Default.mergeOptions({
-      iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-      iconUrl: require('leaflet/dist/images/marker-icon.png'),
-      shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+      iconRetinaUrl: retinaIcon,
+      iconUrl: icon,
+      shadowUrl: iconShadow
     })
     stations.current = new L.LayerGroup()
     heatmap.current = new L.LayerGroup()
