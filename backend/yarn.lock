@@ -879,10 +879,10 @@ pupa@^2.0.1:
   dependencies:
     escape-goat "^2.0.0"
 
-python-shell@^2.0.0:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/python-shell/-/python-shell-2.0.1.tgz#314eccd523bd6f41cbcc1c399eadab70f76e6e92"
-  integrity sha512-Ys+SiCinY9JrldIJxGWd2AMQSQZLU7PFzrCWY7HTawZ73tIthFdlLLU1Y6Y40Hwdutc+TmfMe5TXNU73s07Xyg==
+python-shell@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/python-shell/-/python-shell-3.0.0.tgz#4eb04b6e7e8878e715b9ccd782b15194555dd074"
+  integrity sha512-vlIkpJBwkhtG8d2rBbPEweg+3UXdkoduRZ0jLbIX3efYutBjTdmdmMrEQCQy9tkabH36yUjOhwTPFkH3BvoYZQ==
 
 qs@6.7.0:
   version "6.7.0"
