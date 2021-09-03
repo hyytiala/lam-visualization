@@ -22,7 +22,7 @@
     "react-scripts": "^3.4.3",
     "reactstrap": "^8.4.1",
     "recharts": "^1.8.5",
-    "terser-webpack-plugin": "4.2.0"
+    "terser-webpack-plugin": "5.2.2"
   },
   "scripts": {
     "start": "react-scripts start",
