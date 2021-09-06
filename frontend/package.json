@@ -21,7 +21,7 @@
     "react-dom": "^16.13.1",
     "react-scripts": "^4.0.3",
     "reactstrap": "^8.10.0",
-    "recharts": "^1.8.5",
+    "recharts": "^2.1.2",
     "terser-webpack-plugin": "5.2.3"
   },
   "scripts": {
