@@ -26,18 +26,10 @@ type CategoryChartProps = {
   station: any;
 };
 
-const getYesterday = () => {
-  const date = new Date();
-  date.setHours(date.getHours() - 3);
-  date.setDate(date.getDate() - 1);
-  return date;
-};
-
-const parseDate = (date: Date) => {
-  const year = date.getFullYear();
-  const day = moment(date).dayOfYear();
-  return [String(year), String(day)];
-};
+const parseDate = (date: Date) => [
+  String(moment(date).year()),
+  String(moment(date).dayOfYear()),
+];
 
 const getBarWidth = () =>
   window.innerWidth > 700 ? 700 : window.innerWidth - 50;
@@ -58,13 +50,15 @@ const parseHourData = (data: Hourly[]) => {
 };
 
 const CategoryChart = ({ lam, ely, station }: CategoryChartProps) => {
-  const [startDate, setStartDate] = useState(getYesterday());
+  const [startDate, setStartDate] = useState(
+    moment().subtract(1, "day").toDate()
+  );
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<DataState>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const date = getYesterday();
+      const date = moment().subtract(1, "day").toDate();
       const time = parseDate(date);
       try {
         const result = await getStationData(time[0], ely, String(lam), time[1]);

@@ -4,12 +4,14 @@ import Row from "react-bootstrap/Row";
 import Modal from "react-bootstrap/Modal";
 import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalBody from "react-bootstrap/ModalBody";
+import ModalFooter from "react-bootstrap/ModalFooter";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import Badge from "react-bootstrap/Badge";
 import CategoryChart from "../CategoryChart/CategoryChart";
 import DataTable from "../DataTable/DataTable";
 import { getBadgeColor, getElyNumber } from "../../utils";
+import styles from "./mapmodal.module.scss";
 
 type MapModalProps = {
   closeModal: any;
@@ -22,16 +24,22 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
   const toggleTab = (tab: string | null) => {
     if (tab && activeTab !== tab) setActiveTab(tab);
   };
-  console.log(station);
 
   return (
-    <Modal show={station} onHide={closeModal} centered size="xl">
+    <Modal
+      show={station}
+      onHide={closeModal}
+      centered
+      size="xl"
+      contentClassName={styles.body}
+      fullscreen="sm-down"
+    >
       <ModalHeader closeButton>
         {station &&
           station?.properties &&
           JSON.parse(station.properties.names).en}
       </ModalHeader>
-      <ModalBody style={{ minHeight: "720px" }}>
+      <ModalBody>
         <Tabs
           id="controlled-tab-example"
           activeKey={activeTab}
@@ -87,6 +95,9 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
             </Row>
           </Tab>
         </Tabs>
+        <ModalFooter>
+          <p>Data provided by The Finnish Transport Agency</p>
+        </ModalFooter>
       </ModalBody>
     </Modal>
   );
