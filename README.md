@@ -11,14 +11,12 @@ This is a project work for university course Interactive Data Visualization. The
 * Easy to understand basemap of Finnish road network
 * Clustering of markers on map for easier usage
 * Descriptive interactive charts for every TMS station
-* Heatmap for the current traffic amounts
 
 
 ## How to use:
 
 1. Open the webpage and wait for the stations to load
-2. In the right corner you can toggle the heatmap on and off
-3. Click station on map to see details and daily charts
+2. Click station on map to see details and daily charts
 
 
 ## Development:
@@ -44,7 +42,8 @@ This is a project work for university course Interactive Data Visualization. The
 ## Learn More:
 
 * [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started)
-* [About TMS data in finnish](https://vayla.fi/avoindata/tiestotiedot/lam-tiedot)
+* [About TMS data in Finnish](https://vayla.fi/avoindata/tiestotiedot/lam-tiedot)
+* [About TMS data in English](https://vayla.fi/en/transport-network/data/open-data/road-network/tms-data)
 * [Digitraffic API description](https://www.digitraffic.fi/en/road-traffic/)
 * [Pandas data analysis tool](https://pandas.pydata.org/)
 

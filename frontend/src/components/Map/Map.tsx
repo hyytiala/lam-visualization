@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import MapGL, { Source, Layer, MapEvent } from "react-map-gl";
+import React, { useEffect, useState, useRef } from "react";
 import { getStations, getVolume } from "../../services/lamService";
+import styles from "./map.module.scss";
 import {
   clusterLayer,
   clusterCountLayer,
@@ -9,22 +9,13 @@ import {
 import MapModal from "../MapModal/MapModal";
 import { MAPBOX_TOKEN, MAPBOX_STYLE } from "../../config";
 import LoadingModal from "../LoadingModal/LoadingModal";
+import mapboxgl from "mapbox-gl";
+
+mapboxgl.accessToken = MAPBOX_TOKEN;
 
 const Map = () => {
-  const [viewport, setViewport] = useState({
-    latitude: 65.4536,
-    longitude: 26.444,
-    bounds: [
-      [71.84, 53.15],
-      [54.77, 1.8],
-    ],
-    zoom: 5,
-    bearing: 0,
-    pitch: 0,
-    maxZoom: 18,
-    minZoom: 5,
-  });
-
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<null | mapboxgl.Map>(null);
   const [stationData, setStationData] =
     useState<GeoJSON.FeatureCollection | null>(null);
   const [loading, setLoading] = useState(true);
@@ -35,6 +26,14 @@ const Map = () => {
 
   useEffect(() => {
     setLoading(true);
+    if (!map.current) {
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current as HTMLElement,
+        style: MAPBOX_STYLE,
+        center: [26.444, 65.4536],
+        zoom: 5,
+      });
+    }
     const fetchStations = async () => {
       try {
         const stations = await getStations();
@@ -86,41 +85,40 @@ const Map = () => {
         setError(true);
       }
     };
-    fetchStations();
+    map.current.on("load", () => {
+      fetchStations();
+    });
   }, []);
 
-  const onClick = (event: MapEvent) => {
-    if (event.features && event.features.length > 0) {
-      setSelected(event.features[0]);
+  useEffect(() => {
+    if (map.current && !map.current.getSource("tms-stations") && stationData) {
+      map.current.addSource("tms-stations", {
+        type: "geojson",
+        data: stationData,
+        cluster: true,
+        clusterMaxZoom: 14,
+        clusterRadius: 50,
+      });
+      map.current.addLayer(clusterLayer);
+      map.current.addLayer(clusterCountLayer);
+      map.current.addLayer(unclusteredPointLayer);
+      map.current.on("mouseenter", "tms-point", () => {
+        map.current!.getCanvas().style.cursor = "pointer";
+      });
+      map.current.on("mouseleave", "tms-point", () => {
+        map.current!.getCanvas().style.cursor = "";
+      });
+      map.current.on("click", "tms-point", (event) => {
+        if (event.features && event.features.length > 0) {
+          setSelected(event.features[0]);
+        }
+      });
     }
-  };
+  }, [stationData]);
 
   return (
     <>
-      <MapGL
-        {...viewport}
-        width="100%"
-        height="100%"
-        mapStyle={MAPBOX_STYLE}
-        onViewportChange={setViewport}
-        mapboxApiAccessToken={MAPBOX_TOKEN}
-        interactiveLayerIds={stationData ? ["unclustered-point"] : []}
-        onClick={onClick}
-      >
-        {stationData && (
-          <Source
-            type="geojson"
-            data={stationData}
-            cluster={true}
-            clusterMaxZoom={14}
-            clusterRadius={50}
-          >
-            <Layer {...clusterLayer} />
-            <Layer {...clusterCountLayer} />
-            <Layer {...unclusteredPointLayer} />
-          </Source>
-        )}
-      </MapGL>
+      <div ref={mapContainer} className={styles.map} />
       <MapModal closeModal={closeModal} station={selected} />
       <LoadingModal loading={loading} error={error} />
     </>

@@ -1,9 +1,7 @@
-import { LayerProps } from "react-map-gl";
-
-export const clusterLayer: LayerProps = {
-  id: "clusters",
+export const clusterLayer: mapboxgl.AnyLayer = {
+  id: "tms-clusters",
   type: "circle",
-  source: "earthquakes",
+  source: "tms-stations",
   filter: ["has", "point_count"],
   paint: {
     "circle-color": "#51D5A0",
@@ -11,10 +9,10 @@ export const clusterLayer: LayerProps = {
   },
 };
 
-export const clusterCountLayer: LayerProps = {
+export const clusterCountLayer: mapboxgl.AnyLayer = {
   id: "cluster-count",
   type: "symbol",
-  source: "earthquakes",
+  source: "tms-stations",
   filter: ["has", "point_count"],
   layout: {
     "text-field": "{point_count_abbreviated}",
@@ -24,10 +22,10 @@ export const clusterCountLayer: LayerProps = {
   paint: {},
 };
 
-export const unclusteredPointLayer: LayerProps = {
-  id: "unclustered-point",
+export const unclusteredPointLayer: mapboxgl.AnyLayer = {
+  id: "tms-point",
   type: "circle",
-  source: "earthquakes",
+  source: "tms-stations",
   filter: ["!", ["has", "point_count"]],
   paint: {
     "circle-color": "#E0E0E0",
