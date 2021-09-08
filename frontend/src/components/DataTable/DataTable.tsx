@@ -10,7 +10,7 @@ const DataTable = ({ data }: DataTableProps) => {
     <Table>
       <thead>
         <tr>
-          <th>Direction:</th>
+          <th>Direction</th>
           <th>vehicles</th>
           <th>average speed</th>
         </tr>

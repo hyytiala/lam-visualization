@@ -65,3 +65,16 @@ export const COLORS: ColorState = {
   Trucks: "#a8201a",
   Busses: "#0f8b8d",
 };
+
+export const getBadgeColor = (roadNumber: number) => {
+  switch (roadNumber.toString().length) {
+    case 1:
+      return "danger";
+    case 2:
+      return "warning";
+    case 3:
+      return "light";
+    default:
+      return "primary";
+  }
+};

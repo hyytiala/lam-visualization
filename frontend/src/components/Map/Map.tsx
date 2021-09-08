@@ -1,8 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
-import styles from "./map.module.scss";
-import MapGL, { Source, Layer, LayerProps, MapEvent } from "react-map-gl";
+import React, { useEffect, useState } from "react";
+import MapGL, { Source, Layer, MapEvent } from "react-map-gl";
 import { getStations, getVolume } from "../../services/lamService";
-import mapboxgl from "mapbox-gl";
 import {
   clusterLayer,
   clusterCountLayer,
@@ -16,9 +14,15 @@ const Map = () => {
   const [viewport, setViewport] = useState({
     latitude: 65.4536,
     longitude: 26.444,
-    zoom: 8,
+    bounds: [
+      [71.84, 53.15],
+      [54.77, 1.8],
+    ],
+    zoom: 5,
     bearing: 0,
     pitch: 0,
+    maxZoom: 18,
+    minZoom: 5,
   });
 
   const [stationData, setStationData] =

@@ -6,9 +6,10 @@ import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalBody from "react-bootstrap/ModalBody";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
+import Badge from "react-bootstrap/Badge";
 import CategoryChart from "../CategoryChart/CategoryChart";
 import DataTable from "../DataTable/DataTable";
-import { getElyNumber } from "../../utils";
+import { getBadgeColor, getElyNumber } from "../../utils";
 
 type MapModalProps = {
   closeModal: any;
@@ -21,6 +22,7 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
   const toggleTab = (tab: string | null) => {
     if (tab && activeTab !== tab) setActiveTab(tab);
   };
+  console.log(station);
 
   return (
     <Modal show={station} onHide={closeModal} centered size="xl">
@@ -54,9 +56,15 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
                 </p>
                 <p>
                   Road number:{" "}
-                  {station &&
-                    station?.properties &&
-                    JSON.parse(station.properties.roadAddress).roadNumber}
+                  {station && station?.properties && (
+                    <Badge
+                      bg={getBadgeColor(
+                        JSON.parse(station.properties.roadAddress).roadNumber
+                      )}
+                    >
+                      {JSON.parse(station.properties.roadAddress).roadNumber}
+                    </Badge>
+                  )}
                 </p>
                 <h4>Station data for latest hour</h4>
                 {station && station?.properties && (
