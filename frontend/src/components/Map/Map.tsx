@@ -10,6 +10,7 @@ import {
 } from "../../layers";
 import MapModal from "../MapModal/MapModal";
 import { MAPBOX_TOKEN, MAPBOX_STYLE } from "../../config";
+import LoadingModal from "../LoadingModal/LoadingModal";
 
 const Map = () => {
   const [viewport, setViewport] = useState({
@@ -29,49 +30,58 @@ const Map = () => {
   const closeModal = () => setSelected(null);
 
   useEffect(() => {
+    setLoading(true);
     const fetchStations = async () => {
-      const stations = await getStations();
-      const data = await getVolume();
-      console.log(data);
+      try {
+        const stations = await getStations();
+        const data = await getVolume();
+        console.log(data);
 
-      const newdata = {
-        ...stations,
-        features: stations.features.map((station) => {
-          const sensor = data.tmsStations.filter(
-            (s: any) => s.id === station.id
-          )[0];
-          const way1 = sensor.sensorValues.filter(
-            (v: any) => v.name === "OHITUKSET_60MIN_KIINTEA_SUUNTA1"
-          )[0];
-          const way2 = sensor.sensorValues.filter(
-            (v: any) => v.name === "OHITUKSET_60MIN_KIINTEA_SUUNTA2"
-          )[0];
-          const avg1 = sensor.sensorValues.filter(
-            (v: any) => v.name === "KESKINOPEUS_60MIN_KIINTEA_SUUNTA1"
-          )[0];
-          const avg2 = sensor.sensorValues.filter(
-            (v: any) => v.name === "KESKINOPEUS_60MIN_KIINTEA_SUUNTA2"
-          )[0];
-          return {
-            ...station,
-            properties: {
-              ...station.properties,
-              passes: {
-                way1: way1 ? way1.sensorValue : -1,
-                way2: way2 ? way2.sensorValue : -1,
-                total: way1 && way2 ? way1.sensorValue + way1.sensorValue : -1,
+        const newdata = {
+          ...stations,
+          features: stations.features.map((station) => {
+            const sensor = data.tmsStations.filter(
+              (s: any) => s.id === station.id
+            )[0];
+            const way1 = sensor.sensorValues.filter(
+              (v: any) => v.name === "OHITUKSET_60MIN_KIINTEA_SUUNTA1"
+            )[0];
+            const way2 = sensor.sensorValues.filter(
+              (v: any) => v.name === "OHITUKSET_60MIN_KIINTEA_SUUNTA2"
+            )[0];
+            const avg1 = sensor.sensorValues.filter(
+              (v: any) => v.name === "KESKINOPEUS_60MIN_KIINTEA_SUUNTA1"
+            )[0];
+            const avg2 = sensor.sensorValues.filter(
+              (v: any) => v.name === "KESKINOPEUS_60MIN_KIINTEA_SUUNTA2"
+            )[0];
+            return {
+              ...station,
+              properties: {
+                ...station.properties,
+                passes: {
+                  way1: way1 ? way1.sensorValue : -1,
+                  way2: way2 ? way2.sensorValue : -1,
+                  total:
+                    way1 && way2 ? way1.sensorValue + way1.sensorValue : -1,
+                },
+                speed: {
+                  way1: avg1 ? avg1.sensorValue : -1,
+                  way2: avg2 ? avg2.sensorValue : -1,
+                  total:
+                    avg1 && avg2
+                      ? (avg1.sensorValue + avg2.sensorValue) / 2
+                      : -1,
+                },
               },
-              speed: {
-                way1: avg1 ? avg1.sensorValue : -1,
-                way2: avg2 ? avg2.sensorValue : -1,
-                total:
-                  avg1 && avg2 ? (avg1.sensorValue + avg2.sensorValue) / 2 : -1,
-              },
-            },
-          };
-        }),
-      };
-      setStationData(newdata);
+            };
+          }),
+        };
+        setStationData(newdata);
+        setLoading(false);
+      } catch (error) {
+        setError(true);
+      }
     };
     fetchStations();
   }, []);
@@ -109,6 +119,7 @@ const Map = () => {
         )}
       </MapGL>
       <MapModal closeModal={closeModal} station={selected} />
+      <LoadingModal loading={loading} error={error} />
     </>
   );
 };
