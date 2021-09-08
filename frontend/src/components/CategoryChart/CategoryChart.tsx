@@ -109,13 +109,13 @@ const CategoryChart = ({ lam, ely, station }: CategoryChartProps) => {
         dateFormat="dd.MM.yyyy"
         locale="en-GB"
         onChange={(date: Date) => handleDateChange(date)}
-        maxDate={getYesterday()}
+        maxDate={moment().subtract(1, "day").toDate()}
         minDate={new Date("2000-01-01")}
         disabled={loading}
-        className={styles.picker}
+        className="form-control"
       />
       {loading ? (
-        <Spinner animation="border" />
+        <Spinner animation="border" className={styles.loader} />
       ) : (
         <div className={styles.dataContent}>
           {data ? (
