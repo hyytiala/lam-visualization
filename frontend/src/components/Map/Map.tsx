@@ -35,7 +35,6 @@ const Map = () => {
       try {
         const stations = await getStations();
         const data = await getVolume();
-        console.log(data);
 
         const newdata = {
           ...stations,

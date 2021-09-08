@@ -6,8 +6,6 @@ type DataTableProps = {
 };
 
 const DataTable = ({ data }: DataTableProps) => {
-  console.log(data);
-
   return (
     <Table>
       <thead>
