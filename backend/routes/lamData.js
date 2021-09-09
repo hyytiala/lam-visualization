@@ -3,6 +3,10 @@ const { spawn } = require('child_process')
 
 const router = express.Router()
 
+router.get('/check', (req, res) => {
+  return res.send('Backend running')
+})
+
 router.get('/', (req, res) => {
   let dataToSend
   const python = spawn('python3', ['./scripts/parser.py', req.query.year, req.query.ely, req.query.lam, req.query.day])

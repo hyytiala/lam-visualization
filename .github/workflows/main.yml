@@ -10,6 +10,7 @@ on:
 env:
   AWS_REGION: eu-central-1
   ECR_REPOSITORY: tms
+  EC2_HOST: ec2-18-195-102-38.eu-central-1.compute.amazonaws.com
   
 jobs:
   deploy:
@@ -42,3 +43,15 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./backend
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+      - name: Update running container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.EC2_HOST }}
+          user: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            docker stop tms
+            docker rm tms
+            docker pull 794948722843.dkr.ecr.eu-central-1.amazonaws.com/tms:latest
+            docker run -p 3001:3001 --name tms -d 794948722843.dkr.ecr.eu-central-1.amazonaws.com/tms:latest
