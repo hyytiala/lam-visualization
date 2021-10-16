@@ -61,10 +61,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 794948722843.dkr.ecr.eu-central-1.amazonaws.com
-            docker stop tms
-            docker rm tms
-            docker pull 794948722843.dkr.ecr.eu-central-1.amazonaws.com/tms:latest
-            docker run -p 3001:3001 --name tms -d 794948722843.dkr.ecr.eu-central-1.amazonaws.com/tms:latest
-            cd tms
+            cd tms/backend
             docker-compose pull
             docker-compose up -d
