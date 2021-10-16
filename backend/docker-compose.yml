@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+  tms:
+    image: 794948722843.dkr.ecr.eu-central-1.amazonaws.com/tms:latest
+    expose:
+      - '3001'
+    ports:
+      - '3001:3001'
