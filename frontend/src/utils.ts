@@ -1,3 +1,5 @@
+import { Color } from "react-bootstrap/esm/types";
+
 type Ely =
   | "1"
   | "5"
@@ -66,15 +68,17 @@ export const COLORS: ColorState = {
   Busses: "#0f8b8d",
 };
 
-export const getBadgeColor = (roadNumber: number) => {
+export const getBadgeProps = (
+  roadNumber: number
+): { bg: string; text?: Color } => {
   switch (roadNumber.toString().length) {
     case 1:
-      return "danger";
+      return { bg: "danger" };
     case 2:
-      return "warning";
+      return { bg: "warning", text: "dark" };
     case 3:
-      return "light";
+      return { bg: "light", text: "dark" };
     default:
-      return "primary";
+      return { bg: "primary" };
   }
 };

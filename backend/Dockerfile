@@ -1,8 +1,5 @@
 FROM node:14
-RUN apt update
-RUN apt install -y python3-pip
-RUN pip3 install pandas
-RUN pip3 install requests
+ENV NODE_ENV=production
 
 WORKDIR /usr/src/app
 

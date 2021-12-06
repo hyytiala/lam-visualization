@@ -3,3 +3,11 @@
     min-height: 788px;
   }
 }
+
+.modalBody {
+  flex: 1 1 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
