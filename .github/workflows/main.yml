@@ -1,17 +1,13 @@
 name: CI
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches: [master]
 
-  workflow_dispatch:
-  
 env:
   AWS_REGION: eu-central-1
   ECR_REPOSITORY: tms
   EC2_HOST: ec2-18-195-102-38.eu-central-1.compute.amazonaws.com
-  
+
 jobs:
   deploy:
     name: Deploy
@@ -33,6 +29,24 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
+
+      - id: package-version
+        name: Package version from package.json
+        shell: bash
+        run: |
+          echo "::set-output name=package-version::$(jq -j .version ./backend/package.json)"
+
+      - name: Create tag
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ steps.package-version.outputs.package-version }}",
+              sha: context.sha
+            })
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image

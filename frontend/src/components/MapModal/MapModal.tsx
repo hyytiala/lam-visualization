@@ -3,7 +3,6 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Modal from "react-bootstrap/Modal";
 import ModalHeader from "react-bootstrap/ModalHeader";
-import ModalBody from "react-bootstrap/ModalBody";
 import ModalFooter from "react-bootstrap/ModalFooter";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
@@ -14,7 +13,7 @@ import { getBadgeProps, getElyNumber } from "../../utils";
 import styles from "./mapmodal.module.scss";
 
 type MapModalProps = {
-  closeModal: any;
+  closeModal: () => void;
   station: null | GeoJSON.Feature;
 };
 
