@@ -3,18 +3,17 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Modal from "react-bootstrap/Modal";
 import ModalHeader from "react-bootstrap/ModalHeader";
-import ModalBody from "react-bootstrap/ModalBody";
 import ModalFooter from "react-bootstrap/ModalFooter";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import Badge from "react-bootstrap/Badge";
 import CategoryChart from "../CategoryChart/CategoryChart";
 import DataTable from "../DataTable/DataTable";
-import { getBadgeColor, getElyNumber } from "../../utils";
+import { getBadgeProps, getElyNumber } from "../../utils";
 import styles from "./mapmodal.module.scss";
 
 type MapModalProps = {
-  closeModal: any;
+  closeModal: () => void;
   station: null | GeoJSON.Feature;
 };
 
@@ -39,13 +38,8 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
           station?.properties &&
           JSON.parse(station.properties.names).en}
       </ModalHeader>
-      <ModalBody>
-        <Tabs
-          id="controlled-tab-example"
-          activeKey={activeTab}
-          onSelect={(k) => toggleTab(k)}
-          className="mb-3"
-        >
+      <div className={styles.modalBody}>
+        <Tabs activeKey={activeTab} onSelect={(k) => toggleTab(k)}>
           <Tab eventKey="1" title="Info">
             <Row>
               <Col sm="12">
@@ -66,7 +60,7 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
                   Road number:{" "}
                   {station && station?.properties && (
                     <Badge
-                      bg={getBadgeColor(
+                      {...getBadgeProps(
                         JSON.parse(station.properties.roadAddress).roadNumber
                       )}
                     >
@@ -98,7 +92,7 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
         <ModalFooter>
           <p>Data provided by The Finnish Transport Agency</p>
         </ModalFooter>
-      </ModalBody>
+      </div>
     </Modal>
   );
 };
