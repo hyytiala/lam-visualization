@@ -37,11 +37,11 @@ jobs:
           echo "::set-output name=package-version::$(jq -j .version ./backend/package.json)"
 
       - name: Create tag
-        uses: actions/github-script@v3
+        uses: actions/github-script@v5
         with:
           github-token: ${{ github.token }}
           script: |
-            github.git.createRef({
+            github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: "refs/tags/${{ steps.package-version.outputs.package-version }}",
