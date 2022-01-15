@@ -58,16 +58,6 @@ export const addStatisticsToData = () => {
   return [];
 };
 
-interface ColorState {
-  [propertyName: string]: string;
-}
-
-export const COLORS: ColorState = {
-  Cars: "#ec9a29",
-  Trucks: "#a8201a",
-  Busses: "#0f8b8d",
-};
-
 export const getBadgeProps = (
   roadNumber: number
 ): { bg: string; text?: Color } => {
@@ -81,4 +71,10 @@ export const getBadgeProps = (
     default:
       return { bg: "primary" };
   }
+};
+
+export const getHourString = (hour: number): string => {
+  if (hour === 24) return "00";
+  if (hour < 10) return `0${hour}`;
+  return String(hour);
 };

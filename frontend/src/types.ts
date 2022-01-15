@@ -1,30 +1,28 @@
-export interface TmsData {
-  total: Total;
-  hourly: Hourly[];
-}
-
-export interface Hourly {
+interface Hourly {
   way1: number;
   way2: number;
 }
 
-export interface Total {
+interface Total {
   cars: number;
   trucks: number;
   busses: number;
   total: number;
 }
 
-type PieData = {
+interface BarData {
   name: string;
-  value: number;
-  total?: number;
-};
+  data: number[];
+}
 
-type BarData = {
-  name: number;
-  way1: number;
-  way2: number;
-};
+export interface TmsData {
+  total: Total;
+  hourly: Hourly[];
+}
 
-export type DataState = null | { pie: PieData[]; bar: BarData[] };
+export interface DataState {
+  pie: number[];
+  bar: BarData[];
+}
+
+

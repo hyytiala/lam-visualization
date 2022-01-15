@@ -43,19 +43,23 @@ const Map = () => {
           ...stations,
           features: stations.features.map((station) => {
             const sensor = data.tmsStations.filter(
-              (s: any) => s.id === station.id
+              (s: GeoJSON.GeoJsonProperties) => s?.id === station.id
             )[0];
             const way1 = sensor.sensorValues.filter(
-              (v: any) => v.name === "OHITUKSET_60MIN_KIINTEA_SUUNTA1"
+              (v: GeoJSON.GeoJsonProperties) =>
+                v?.name === "OHITUKSET_60MIN_KIINTEA_SUUNTA1"
             )[0];
             const way2 = sensor.sensorValues.filter(
-              (v: any) => v.name === "OHITUKSET_60MIN_KIINTEA_SUUNTA2"
+              (v: GeoJSON.GeoJsonProperties) =>
+                v?.name === "OHITUKSET_60MIN_KIINTEA_SUUNTA2"
             )[0];
             const avg1 = sensor.sensorValues.filter(
-              (v: any) => v.name === "KESKINOPEUS_60MIN_KIINTEA_SUUNTA1"
+              (v: GeoJSON.GeoJsonProperties) =>
+                v?.name === "KESKINOPEUS_60MIN_KIINTEA_SUUNTA1"
             )[0];
             const avg2 = sensor.sensorValues.filter(
-              (v: any) => v.name === "KESKINOPEUS_60MIN_KIINTEA_SUUNTA2"
+              (v: GeoJSON.GeoJsonProperties) =>
+                v?.name === "KESKINOPEUS_60MIN_KIINTEA_SUUNTA2"
             )[0];
             return {
               ...station,
@@ -103,10 +107,10 @@ const Map = () => {
       map.current.addLayer(clusterCountLayer);
       map.current.addLayer(unclusteredPointLayer);
       map.current.on("mouseenter", "tms-point", () => {
-        map.current!.getCanvas().style.cursor = "pointer";
+        if (map.current) map.current.getCanvas().style.cursor = "pointer";
       });
       map.current.on("mouseleave", "tms-point", () => {
-        map.current!.getCanvas().style.cursor = "";
+        if (map.current) map.current.getCanvas().style.cursor = "";
       });
       map.current.on("click", "tms-point", (event) => {
         if (event.features && event.features.length > 0) {
