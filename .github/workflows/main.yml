@@ -50,7 +50,7 @@ jobs:
               github.rest.git.updateRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                ref: "refs/tags/${{ steps.package-version.outputs.package-version }}",
+                ref: "tags/${{ steps.package-version.outputs.package-version }}",
                 sha: context.sha
               })
             } else {
