@@ -22,8 +22,6 @@ This is a project work for university course Interactive Data Visualization. The
 ## Development:
 ### Prerequisites:
 * Node.js >10
-* Python 3
-* pandas in python
 
 ### Backend:
 
@@ -45,5 +43,4 @@ This is a project work for university course Interactive Data Visualization. The
 * [About TMS data in Finnish](https://vayla.fi/avoindata/tiestotiedot/lam-tiedot)
 * [About TMS data in English](https://vayla.fi/en/transport-network/data/open-data/road-network/tms-data)
 * [Digitraffic API description](https://www.digitraffic.fi/en/road-traffic/)
-* [Pandas data analysis tool](https://pandas.pydata.org/)
 
