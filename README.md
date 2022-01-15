@@ -1,6 +1,6 @@
 # Traffic map
 
-[See demo](https://hyytiala.fi/idv_project)
+[See demo](https://tms.hyytiala.fi/)
 
 ## Description
 
