@@ -41,15 +41,20 @@ jobs:
         with:
           github-token: ${{ github.token }}
           script: |
-            try {
-              github.rest.git.createRef({
+            const existingRef = github.rest.git.listMatchingRefs({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ steps.package-version.outputs.package-version }}",
+            })
+            if (existingRef) {
+              github.rest.git.updateRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 ref: "refs/tags/${{ steps.package-version.outputs.package-version }}",
                 sha: context.sha
               })
-            } catch {
-              github.rest.git.updateRef({
+            } else {
+              github.rest.git.createRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 ref: "refs/tags/${{ steps.package-version.outputs.package-version }}",
