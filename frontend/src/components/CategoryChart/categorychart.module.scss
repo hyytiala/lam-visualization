@@ -6,7 +6,7 @@
 }
 
 .gridContainer {
-  padding: 0
+  padding: 0;
 }
 
 .title {
@@ -22,15 +22,16 @@
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
+  row-gap: 2rem;
 
   .bar {
-    flex-grow: 1;
     padding: 0;
+    flex-grow: 1;
+    min-width: 400px;
   }
 
   .pie {
-    flex-grow: 1;
     padding: 0;
   }
 

@@ -4,97 +4,142 @@ import styles from "./categorychart.module.scss";
 import DatePicker, { registerLocale } from "react-datepicker";
 import el from "date-fns/locale/en-GB";
 import Spinner from "react-bootstrap/Spinner";
-import {
-  PieChart,
-  Pie,
-  Legend,
-  Tooltip,
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-} from "recharts";
-import moment from "moment";
-import { TmsData, DataState, Total, Hourly } from "../../types";
-import { COLORS } from "../../utils";
+import { getYear, getDayOfYear, subDays } from "date-fns";
+import { TmsData, DataState } from "../../types";
+import { getHourString } from "../../utils";
+import ReactApexChart from "react-apexcharts";
+import { ApexOptions } from "apexcharts";
 
 type CategoryChartProps = {
   lam: number;
   ely: string;
-  station: any;
+  station: GeoJSON.Feature;
 };
 
 const parseDate = (date: Date) => [
-  String(moment(date).year()),
-  String(moment(date).dayOfYear()),
+  String(getYear(date)),
+  String(getDayOfYear(date)),
 ];
 
-const getBarWidth = () =>
-  window.innerWidth > 700 ? 700 : window.innerWidth - 50;
-const getPieWidth = () =>
-  window.innerWidth > 500 ? 400 : window.innerWidth - 50;
-const getPieRadius = () => (window.innerWidth > 500 ? 120 : 90);
-
-const parseData = (data: Total) => {
-  return [
-    { name: "Cars", value: data.cars, total: data.total },
-    { name: "Trucks", value: data.trucks },
-    { name: "Busses", value: data.busses },
-  ];
+const apexOptions: ApexOptions = {
+  chart: {
+    type: "bar",
+    height: 350,
+  },
+  plotOptions: {
+    bar: {
+      horizontal: false,
+      columnWidth: "80%",
+    },
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  xaxis: {
+    categories: Array(24)
+      .fill(0)
+      .map((x, y) => getHourString(x + y)),
+  },
+  tooltip: {
+    shared: true,
+    intersect: false,
+    x: {
+      formatter: (val) => `${val} - ${getHourString(Number(val) + 1)}`,
+    },
+  },
 };
 
-const parseHourData = (data: Hourly[]) => {
-  return data.map((e, i) => ({ name: i, way1: e.way1, way2: e.way2 }));
+const pieOptions: ApexOptions = {
+  chart: {
+    width: 380,
+    type: "donut",
+    offsetY: 30,
+  },
+  labels: ["Cars", "Trucks", "Busses"],
+  legend: {
+    position: "bottom",
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  tooltip: {
+    enabled: false,
+  },
+  plotOptions: {
+    pie: {
+      donut: {
+        size: "65%",
+        background: "transparent",
+        labels: {
+          show: true,
+          name: {
+            show: true,
+          },
+          value: {
+            show: true,
+          },
+          total: {
+            show: true,
+            showAlways: false,
+            label: "Total",
+            color: "#373d3f",
+            formatter: (w) =>
+              w.globals.seriesTotals.reduce((a: number, b: number) => a + b, 0),
+          },
+        },
+      },
+    },
+  },
 };
 
 const CategoryChart = ({ lam, ely, station }: CategoryChartProps) => {
-  const [startDate, setStartDate] = useState(
-    moment().subtract(1, "day").toDate()
-  );
+  const [startDate, setStartDate] = useState(subDays(new Date(), 1));
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<DataState>(null);
-
+  const [data, setData] = useState<DataState | null>(null);
+  const fetchData = async (date: Date) => {
+    const time = parseDate(date);
+    try {
+      const result: TmsData = await getStationData(
+        time[0],
+        ely,
+        String(lam),
+        time[1]
+      );
+      const pieData = [
+        result.total.cars,
+        result.total.trucks,
+        result.total.busses,
+      ];
+      const barData = [
+        {
+          name: `to ${station.properties?.direction1Municipality || "Way 1"}`,
+          data: result.hourly.map(({ way1 }) => way1),
+        },
+        {
+          name: `to ${station.properties?.direction2Municipality || "Way 2"}`,
+          data: result.hourly.map(({ way2 }) => way2),
+        },
+      ];
+      setData({ pie: pieData, bar: barData });
+    } catch (error) {
+      setData(null);
+    }
+    setLoading(false);
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      const date = moment().subtract(1, "day").toDate();
-      const time = parseDate(date);
-      try {
-        const result = await getStationData(time[0], ely, String(lam), time[1]);
-        const pieData = parseData(result.total);
-        const barData = parseHourData(result.hourly);
-        setData({ pie: pieData, bar: barData });
-      } catch (error) {
-        setData(null);
-      }
-      setLoading(false);
-    };
-    fetchData();
+    fetchData(startDate);
   }, []);
 
-  const handleDateChange = async (date: Date) => {
+  const handleDateChange = (date: Date) => {
     if (date) {
-      setStartDate(date);
       setLoading(true);
-      const time = parseDate(date);
-      try {
-        const result: TmsData = await getStationData(
-          time[0],
-          ely,
-          String(lam),
-          time[1]
-        );
-        const pieData = parseData(result.total);
-        const barData = parseHourData(result.hourly);
-        setData({ pie: pieData, bar: barData });
-      } catch (error) {
-        setData(null);
-      }
-      setLoading(false);
+      setStartDate(date);
+      fetchData(date);
     }
   };
+
   registerLocale("en-GB", el);
+
   return (
     <div className={styles.container}>
       <h4 className={styles.title}>Select date</h4>
@@ -103,7 +148,7 @@ const CategoryChart = ({ lam, ely, station }: CategoryChartProps) => {
         dateFormat="dd.MM.yyyy"
         locale="en-GB"
         onChange={(date: Date) => handleDateChange(date)}
-        maxDate={moment().subtract(1, "day").toDate()}
+        maxDate={subDays(new Date(), 1)}
         minDate={new Date("2000-01-01")}
         disabled={loading}
         className="form-control"
@@ -114,57 +159,22 @@ const CategoryChart = ({ lam, ely, station }: CategoryChartProps) => {
         <div className={styles.dataContent}>
           {data ? (
             <>
-              <div>
+              <div className={styles.pie}>
                 <h4 className={styles.title}>Traffic by vehicle type</h4>
-                <p>Total: {data.pie[0].total} vehicles</p>
-                <PieChart
-                  width={getPieWidth()}
-                  height={400}
-                  style={{ margin: "auto" }}
-                >
-                  <Pie
-                    dataKey="value"
-                    isAnimationActive={false}
-                    data={data.pie}
-                    outerRadius={getPieRadius()}
-                    label
-                  >
-                    {data.pie.map((entry, index) => (
-                      <Cell key={index} fill={COLORS[entry.name]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
+                <ReactApexChart
+                  options={pieOptions}
+                  series={data.pie}
+                  type="donut"
+                  width={400}
+                />
               </div>
-              <div>
+              <div className={styles.bar}>
                 <h4 className={styles.title}>Traffic hourly by direction</h4>
-                <BarChart
-                  width={getBarWidth()}
-                  height={400}
-                  data={data.bar}
-                  margin={{ top: 5, right: 30, left: 0, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar
-                    dataKey="way1"
-                    fill="#1b263b"
-                    name={`to ${
-                      station.properties.direction1Municipality || "Way 1"
-                    }`}
-                  />
-                  <Bar
-                    dataKey="way2"
-                    fill="#d66853"
-                    name={`to ${
-                      station.properties.direction2Municipality || "Way 2"
-                    }`}
-                  />
-                </BarChart>
+                <ReactApexChart
+                  options={apexOptions}
+                  series={data.bar}
+                  type="bar"
+                />
               </div>
             </>
           ) : (

@@ -2,10 +2,11 @@ import React from "react";
 import Table from "react-bootstrap/Table";
 
 type DataTableProps = {
-  data: { [name: string]: any };
+  data: GeoJSON.GeoJsonProperties;
 };
 
 const DataTable = ({ data }: DataTableProps) => {
+  if (!data) return <></>;
   return (
     <Table>
       <thead>
