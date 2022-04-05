@@ -8,9 +8,9 @@ router.get("/check", (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  const { year, ely, lam, day } = req.query;
+  const { year, lam, day } = req.query;
   try {
-    const result = await getTraffic(year, ely, lam, day);
+    const result = await getTraffic(year, lam, day);
     res.json(result);
   } catch {
     res.sendStatus(404);

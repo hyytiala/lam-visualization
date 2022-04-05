@@ -1,7 +1,7 @@
 const axios = require("axios").default;
 const dataForge = require("data-forge");
 
-const tmsBaseUrl = "https://aineistot.vayla.fi/lam/rawdata";
+const tmsBaseUrl = "https://tie-test.digitraffic.fi/api/tms/history/raw";
 
 const header = [
   "id",
@@ -50,10 +50,8 @@ const getHourlyList = (data) =>
     ).length,
   }));
 
-const getTraffic = async (year, ely, lam, day) => {
-  const url = `${tmsBaseUrl}/${year}/${ely}/lamraw_${lam}_${year.slice(
-    -2
-  )}_${day}.csv`;
+const getTraffic = async (year, lam, day) => {
+  const url = `${tmsBaseUrl}/lamraw_${lam}_${year.slice(-2)}_${day}.csv`;
   const response = await axios.get(url);
   const data = dataForge
     .fromCSV(response.data, { columnNames: header })

@@ -9,7 +9,7 @@ import Tab from "react-bootstrap/Tab";
 import Badge from "react-bootstrap/Badge";
 import CategoryChart from "../CategoryChart/CategoryChart";
 import DataTable from "../DataTable/DataTable";
-import { getBadgeProps, getElyNumber } from "../../utils";
+import { getBadgeProps } from "../../utils";
 import styles from "./mapmodal.module.scss";
 
 type MapModalProps = {
@@ -81,7 +81,6 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
                 {station && station?.properties && (
                   <CategoryChart
                     lam={station.properties.tmsNumber}
-                    ely={getElyNumber(station.properties.provinceCode)}
                     station={station}
                   />
                 )}

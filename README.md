@@ -8,24 +8,25 @@ This is a project work for university course Interactive Data Visualization. The
 
 ## Key features:
 
-* Easy to understand basemap of Finnish road network
-* Clustering of markers on map for easier usage
-* Descriptive interactive charts for every TMS station
-
+- Easy to understand basemap of Finnish road network
+- Clustering of markers on map for easier usage
+- Descriptive interactive charts for every TMS station
 
 ## How to use:
 
 1. Open the webpage and wait for the stations to load
 2. Click station on map to see details and daily charts
 
-
 ## Development:
+
 ### Prerequisites:
-* Node.js >10
+
+- Node.js >10
 
 ### Backend:
 
 **Start development**
+
 1. Install yarn packages `yarn install`
 2. Start development server `yarn watch`
 3. Server running at `http://localhost:3001/`
@@ -33,14 +34,13 @@ This is a project work for university course Interactive Data Visualization. The
 ### Frontend:
 
 **Start development**
+
 1. Install yarn packages `yarn install`
 2. Start development server `yarn start`
 3. Server running at `http://localhost:3000/`
 
 ## Learn More:
 
-* [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started)
-* [About TMS data in Finnish](https://vayla.fi/avoindata/tiestotiedot/lam-tiedot)
-* [About TMS data in English](https://vayla.fi/en/transport-network/data/open-data/road-network/tms-data)
-* [Digitraffic API description](https://www.digitraffic.fi/en/road-traffic/)
-
+- [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started)
+- [About TMS data](https://www.digitraffic.fi/en/road-traffic/lam/)
+- [Digitraffic API description](https://www.digitraffic.fi/en/road-traffic/)

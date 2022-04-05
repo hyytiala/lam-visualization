@@ -12,7 +12,6 @@ import { ApexOptions } from "apexcharts";
 
 type CategoryChartProps = {
   lam: number;
-  ely: string;
   station: GeoJSON.Feature;
 };
 
@@ -92,7 +91,7 @@ const pieOptions: ApexOptions = {
   },
 };
 
-const CategoryChart = ({ lam, ely, station }: CategoryChartProps) => {
+const CategoryChart = ({ lam, station }: CategoryChartProps) => {
   const [startDate, setStartDate] = useState(subDays(new Date(), 1));
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<DataState | null>(null);
@@ -101,7 +100,6 @@ const CategoryChart = ({ lam, ely, station }: CategoryChartProps) => {
     try {
       const result: TmsData = await getStationData(
         time[0],
-        ely,
         String(lam),
         time[1]
       );

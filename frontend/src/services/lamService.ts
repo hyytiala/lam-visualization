@@ -21,12 +21,11 @@ export const getVolume = async () => {
 
 export const getStationData = async (
   year: string,
-  ely: string,
   lam: string,
   day: string
 ) => {
   const response = await axios.get(
-    `${URL}/lam/api?year=${year}&ely=${ely}&lam=${lam}&day=${day}`
+    `${URL}/lam/api?year=${year}&lam=${lam}&day=${day}`
   );
   return response.data;
 };
