@@ -4,6 +4,7 @@ import styles from "./categorychart.module.scss";
 import DatePicker, { registerLocale } from "react-datepicker";
 import el from "date-fns/locale/en-GB";
 import Spinner from "react-bootstrap/Spinner";
+import Table from "react-bootstrap/Table";
 import { getYear, getDayOfYear, subDays } from "date-fns";
 import { TmsData, DataState } from "../../types";
 import { getHourString } from "../../utils";
@@ -135,7 +136,7 @@ const CategoryChart = ({ lam, station }: CategoryChartProps) => {
           data: result.hourly.map(({ way2 }) => way2),
         },
       ];
-      setData({ pie: pieData, bar: barData });
+      setData({ pie: pieData, bar: barData, speeds: result.speeds });
     } catch (error) {
       setData(null);
     }
@@ -175,13 +176,29 @@ const CategoryChart = ({ lam, station }: CategoryChartProps) => {
           {data ? (
             <>
               <div className={styles.pie}>
-                <h4 className={styles.title}>Traffic by vehicle type</h4>
-                <ReactApexChart
-                  options={pieOptions}
-                  series={data.pie}
-                  type="donut"
-                  width={400}
-                />
+                <div>
+                  <h4 className={styles.title}>Traffic by vehicle type</h4>
+                  <ReactApexChart
+                    options={pieOptions}
+                    series={data.pie}
+                    type="donut"
+                    width={400}
+                  />
+                </div>
+                <div className={styles.speeds}>
+                  <Table>
+                    <tbody>
+                      <tr>
+                        <th scope="row">Average speed</th>
+                        <td>{`${data.speeds.average.toFixed()} km/h`}</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Max speed</th>
+                        <td>{`${data.speeds.max.toFixed()} km/h`}</td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </div>
               </div>
               <div className={styles.bar}>
                 <h4 className={styles.title}>Traffic hourly by direction</h4>
