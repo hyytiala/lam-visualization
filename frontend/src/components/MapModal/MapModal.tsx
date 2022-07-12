@@ -18,7 +18,7 @@ type MapModalProps = {
 };
 
 const MapModal = ({ closeModal, station }: MapModalProps) => {
-  const [activeTab, setActiveTab] = useState("2");
+  const [activeTab, setActiveTab] = useState("1");
 
   const toggleTab = (tab: string | null) => {
     if (tab && activeTab !== tab) setActiveTab(tab);
@@ -26,12 +26,12 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
 
   return (
     <Modal
-      show={station}
+      show={Boolean(station)}
       onHide={closeModal}
       centered
       size="xl"
       contentClassName={styles.body}
-      fullscreen="sm-down"
+      fullscreen="xl-down"
     >
       <ModalHeader closeButton>
         {station &&
@@ -39,8 +39,27 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
           JSON.parse(station.properties.names).en}
       </ModalHeader>
       <div className={styles.modalBody}>
-        <Tabs activeKey={activeTab} onSelect={(k) => toggleTab(k)}>
-          <Tab eventKey="1" title="Info">
+        <Tabs
+          activeKey={activeTab}
+          onSelect={(k) => toggleTab(k)}
+          unmountOnExit={true}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          justify={true}
+        >
+          <Tab eventKey="1" title="Charts" className={styles.tabContent}>
+            <Row>
+              <Col sm="12">
+                {station && station?.properties && (
+                  <CategoryChart
+                    lam={station.properties.tmsNumber}
+                    station={station}
+                  />
+                )}
+              </Col>
+            </Row>
+          </Tab>
+          <Tab eventKey="2" title="Info" className={styles.tabContent}>
             <Row>
               <Col sm="12">
                 <h4>Station details</h4>
@@ -75,21 +94,18 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
               </Col>
             </Row>
           </Tab>
-          <Tab eventKey="2" title="Charts">
-            <Row>
-              <Col sm="12">
-                {station && station?.properties && (
-                  <CategoryChart
-                    lam={station.properties.tmsNumber}
-                    station={station}
-                  />
-                )}
-              </Col>
-            </Row>
-          </Tab>
         </Tabs>
         <ModalFooter>
-          <p>Data provided by The Finnish Transport Agency</p>
+          <p>
+            Source: Fintraffic /{" "}
+            <a href="https://www.digitraffic.fi/en/road-traffic/">
+              digitraffic.fi
+            </a>
+          </p>
+          <p>
+            (<a href="http://creativecommons.org/licenses/by/4.0/">CC 4.0 BY</a>
+            )
+          </p>
         </ModalFooter>
       </div>
     </Modal>

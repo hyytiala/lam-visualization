@@ -46,6 +46,23 @@ const apexOptions: ApexOptions = {
       formatter: (val) => `${val} - ${getHourString(Number(val) + 1)}`,
     },
   },
+  responsive: [
+    {
+      breakpoint: 576,
+      options: {
+        chart: {
+          type: "bar",
+          height: 600,
+        },
+        plotOptions: {
+          bar: {
+            horizontal: true,
+            columnWidth: "80%",
+          },
+        },
+      },
+    },
+  ],
 };
 
 const pieOptions: ApexOptions = {

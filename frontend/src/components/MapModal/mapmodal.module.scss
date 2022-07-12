@@ -1,14 +1,19 @@
-@media (min-width: 576px) {
+@media (min-width: 1200px) {
   .body {
-    min-height: 809px;
+    min-height: 850px;
   }
 }
 
 .modalBody {
   flex: 1 1 auto;
-  padding: 1rem;
+  padding-top: 1rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.tabContent {
+  padding: 1rem;
 }
