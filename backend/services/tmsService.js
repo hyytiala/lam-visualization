@@ -38,38 +38,62 @@ const getVehicleTypeName = (vehicleType) => {
   }
 };
 
-const getHourlyList = (data) =>
-  new Array(24).fill(null).map((_, index) => ({
-    way1: data.filter(
-      (vehicleRow) =>
-        vehicleRow.hour === String(index) && vehicleRow.way === "1"
-    ).length,
-    way2: data.filter(
-      (vehicleRow) =>
-        vehicleRow.hour === String(index) && vehicleRow.way === "2"
-    ).length,
-  }));
-
 const getTraffic = async (year, lam, day) => {
   const url = `${tmsBaseUrl}/lamraw_${lam}_${year.slice(-2)}_${day}.csv`;
   const response = await axios.get(url);
-  const data = dataForge
+
+  const dataSet = dataForge
     .fromCSV(response.data, { columnNames: header })
-    .toArray()
     .filter((row) => row.faulty === "0")
     .map((validRow) => ({
       hour: validRow.hour,
       way: validRow.way,
       type: getVehicleTypeName(validRow.vehicleClass),
+      speed: Number.parseInt(validRow.speed),
     }));
+
+  const totalData = dataSet
+    .groupBy((row) => row.type)
+    .select((group) => ({
+      type: group.first().type,
+      count: group.count(),
+    }))
+    .inflate()
+    .toArray();
+
+  const hourlyData = dataSet
+    .groupBy((row) => row.hour)
+    .select((group) => ({
+      hour: Number.parseInt(group.first().hour),
+      way1: group.filter((row) => row.way === "1").count(),
+      way2: group.filter((row) => row.way === "2").count(),
+    }))
+    .orderBy((row) => row.hour)
+    .inflate()
+    .toArray();
+
+  const speedData = dataForge
+    .fromCSV(response.data, { columnNames: header })
+    .filter((row) => row.faulty === "0")
+    .map((validRow) => ({
+      speed: Number.parseInt(validRow.speed),
+    }))
+    .summarize({
+      speed: {
+        average: (series) => series.average(),
+        max: (series) => series.max(),
+      },
+    });
+
   const tmsData = {
     total: {
-      cars: data.filter((vehicleRow) => vehicleRow.type === "CAR").length,
-      trucks: data.filter((vehicleRow) => vehicleRow.type === "TRUCK").length,
-      busses: data.filter((vehicleRow) => vehicleRow.type === "BUS").length,
-      total: data.length,
+      cars: totalData.find(({ type }) => type === "CAR").count,
+      trucks: totalData.find(({ type }) => type === "TRUCK").count,
+      busses: totalData.find(({ type }) => type === "BUS").count,
+      total: dataSet.count(),
     },
-    hourly: getHourlyList(data),
+    speeds: speedData,
+    hourly: hourlyData,
   };
   return tmsData;
 };
