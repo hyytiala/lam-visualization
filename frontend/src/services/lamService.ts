@@ -1,4 +1,5 @@
 import axios from "axios";
+import { TmsStationsData } from "../types";
 
 const URL =
   process.env.NODE_ENV === "development"
@@ -12,9 +13,9 @@ export const getStations = async (): Promise<GeoJSON.FeatureCollection> => {
   return response.data;
 };
 
-export const getVolume = async () => {
+export const getRealTimeData = async (id: number): Promise<TmsStationsData> => {
   const response = await axios.get(
-    "https://tie.digitraffic.fi/api/v1/data/tms-data"
+    `https://tie.digitraffic.fi/api/v1/data/tms-data/${id}`
   );
   return response.data;
 };

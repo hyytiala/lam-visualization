@@ -8,7 +8,7 @@ import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import Badge from "react-bootstrap/Badge";
 import CategoryChart from "../CategoryChart/CategoryChart";
-import DataTable from "../DataTable/DataTable";
+import DataTable from "../StationData/StationData";
 import { getBadgeProps } from "../../utils";
 import styles from "./mapmodal.module.scss";
 
@@ -47,36 +47,11 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
           // @ts-ignore
           justify={true}
         >
-          <Tab eventKey="1" title="Charts" className={styles.tabContent}>
+          <Tab eventKey="1" title="Info" className={styles.tabContent}>
             <Row>
               <Col sm="12">
-                {station && station?.properties && (
-                  <CategoryChart
-                    lam={station.properties.tmsNumber}
-                    station={station}
-                  />
-                )}
-              </Col>
-            </Row>
-          </Tab>
-          <Tab eventKey="2" title="Info" className={styles.tabContent}>
-            <Row>
-              <Col sm="12">
-                <h4>Station details</h4>
                 <p>
-                  Municipality:{" "}
-                  {station &&
-                    station?.properties &&
-                    station.properties.municipality}
-                </p>
-                <p>
-                  Province:{" "}
-                  {station &&
-                    station?.properties &&
-                    station.properties.province}
-                </p>
-                <p>
-                  Road number:{" "}
+                  <b>Road number:</b>{" "}
                   {station && station?.properties && (
                     <Badge
                       {...getBadgeProps(
@@ -87,9 +62,35 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
                     </Badge>
                   )}
                 </p>
-                <h4>Station data for latest hour</h4>
+                <p>
+                  <b>Municipality:</b>{" "}
+                  {station &&
+                    station?.properties &&
+                    station.properties.municipality}
+                </p>
+                <p>
+                  <b>Province:</b>{" "}
+                  {station &&
+                    station?.properties &&
+                    station.properties.province}
+                </p>
+                {station && station?.properties && station.id && (
+                  <DataTable
+                    stationProperties={station.properties}
+                    stationId={station.id as number}
+                  />
+                )}
+              </Col>
+            </Row>
+          </Tab>
+          <Tab eventKey="2" title="Charts" className={styles.tabContent}>
+            <Row>
+              <Col sm="12">
                 {station && station?.properties && (
-                  <DataTable data={station.properties} />
+                  <CategoryChart
+                    lam={station.properties.tmsNumber}
+                    station={station}
+                  />
                 )}
               </Col>
             </Row>

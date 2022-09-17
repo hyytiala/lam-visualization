@@ -5,6 +5,7 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import el from "date-fns/locale/en-GB";
 import Spinner from "react-bootstrap/Spinner";
 import Table from "react-bootstrap/Table";
+import Alert from "react-bootstrap/Alert";
 import { getYear, getDayOfYear, subDays } from "date-fns";
 import { TmsData, DataState } from "../../types";
 import { getHourString } from "../../utils";
@@ -210,7 +211,9 @@ const CategoryChart = ({ lam, station }: CategoryChartProps) => {
               </div>
             </>
           ) : (
-            <p>No data for selected date</p>
+            <Alert variant="danger" className={styles.loader}>
+              No data available for selected date
+            </Alert>
           )}
         </div>
       )}

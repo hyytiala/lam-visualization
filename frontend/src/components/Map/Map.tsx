@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { getStations, getVolume } from "../../services/lamService";
+import { getStations } from "../../services/lamService";
 import styles from "./map.module.scss";
 import {
   clusterLayer,
@@ -37,53 +37,7 @@ const Map = () => {
     const fetchStations = async () => {
       try {
         const stations = await getStations();
-        const data = await getVolume();
-
-        const newdata = {
-          ...stations,
-          features: stations.features.map((station) => {
-            const sensor = data.tmsStations.filter(
-              (s: GeoJSON.GeoJsonProperties) => s?.id === station.id
-            )[0];
-            const way1 = sensor.sensorValues.filter(
-              (v: GeoJSON.GeoJsonProperties) =>
-                v?.name === "OHITUKSET_60MIN_KIINTEA_SUUNTA1"
-            )[0];
-            const way2 = sensor.sensorValues.filter(
-              (v: GeoJSON.GeoJsonProperties) =>
-                v?.name === "OHITUKSET_60MIN_KIINTEA_SUUNTA2"
-            )[0];
-            const avg1 = sensor.sensorValues.filter(
-              (v: GeoJSON.GeoJsonProperties) =>
-                v?.name === "KESKINOPEUS_60MIN_KIINTEA_SUUNTA1"
-            )[0];
-            const avg2 = sensor.sensorValues.filter(
-              (v: GeoJSON.GeoJsonProperties) =>
-                v?.name === "KESKINOPEUS_60MIN_KIINTEA_SUUNTA2"
-            )[0];
-            return {
-              ...station,
-              properties: {
-                ...station.properties,
-                passes: {
-                  way1: way1 ? way1.sensorValue : -1,
-                  way2: way2 ? way2.sensorValue : -1,
-                  total:
-                    way1 && way2 ? way1.sensorValue + way1.sensorValue : -1,
-                },
-                speed: {
-                  way1: avg1 ? avg1.sensorValue : -1,
-                  way2: avg2 ? avg2.sensorValue : -1,
-                  total:
-                    avg1 && avg2
-                      ? (avg1.sensorValue + avg2.sensorValue) / 2
-                      : -1,
-                },
-              },
-            };
-          }),
-        };
-        setStationData(newdata);
+        setStationData(stations);
         setLoading(false);
       } catch (error) {
         setError(true);
