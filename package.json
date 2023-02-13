@@ -1,0 +1,9 @@
+{
+  "name": "tms-visualization",
+  "version": "1.2.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "pnpm run --stream --parallel --filter 'tms-api...' --filter 'tms-ui...' dev"
+  }
+}

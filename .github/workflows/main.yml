@@ -34,7 +34,7 @@ jobs:
         name: Package version from package.json
         shell: bash
         run: |
-          echo "::set-output name=package-version::$(jq -j .version ./backend/package.json)"
+          echo "::set-output name=package-version::$(jq -j .version ./package.json)"
 
       - name: Create tag
         uses: actions/github-script@v5
@@ -68,7 +68,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: latest
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./backend
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
@@ -78,7 +78,7 @@ jobs:
           host: ${{ env.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
-          source: backend/docker-compose.yml
+          source: ./docker-compose.yml
           target: tms
 
       - name: Update running container
