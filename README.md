@@ -21,26 +21,16 @@ This is a project work for university course Interactive Data Visualization. The
 
 ### Prerequisites:
 
-- Node.js >10
+- Node.js >16
+- `pnpm` package manager installed
 
-### Backend:
+### Start development:
 
-**Start development**
-
-1. Install yarn packages `yarn install`
-2. Start development server `yarn watch`
-3. Server running at `http://localhost:3001/`
-
-### Frontend:
-
-**Start development**
-
-1. Install yarn packages `yarn install`
-2. Start development server `yarn start`
-3. Server running at `http://localhost:3000/`
+1. Install packages `pnpm install`
+2. Start development server `pnpm dev`
+3. UI running at `http://localhost:3000/` and API running at `http://localhost:3001/`
 
 ## Learn More:
 
-- [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started)
 - [About TMS data](https://www.digitraffic.fi/en/road-traffic/lam/)
 - [Digitraffic API description](https://www.digitraffic.fi/en/road-traffic/)
