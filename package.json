@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "pnpm run --stream --parallel --filter 'tms-api...' --filter 'tms-ui...' dev"
+    "dev": "pnpm run --stream --parallel --filter 'tms-api...' --filter 'tms-ui...' dev",
+    "lint": "pnpm run --stream --parallel --filter 'tms-api...' --filter 'tms-ui...' lint"
   }
 }
