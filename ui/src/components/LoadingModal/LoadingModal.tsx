@@ -11,7 +11,7 @@ type LoadingModalProps = {
 const LoadingModal = ({ loading, error }: LoadingModalProps) => {
   return (
     <Modal
-      show={loading}
+      show={loading || error}
       centered
       contentClassName={styles.content}
       dialogClassName={styles.modal}

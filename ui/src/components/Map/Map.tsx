@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { getStations } from "../../services/lamService";
+import { fetchStations } from "../../services/lamService";
 import styles from "./map.module.scss";
 import {
   clusterLayer,
@@ -10,22 +10,24 @@ import MapModal from "../MapModal/MapModal";
 import { MAPBOX_TOKEN, MAPBOX_STYLE } from "../../config";
 import LoadingModal from "../LoadingModal/LoadingModal";
 import mapboxgl from "mapbox-gl";
+import { useQuery } from "@tanstack/react-query";
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
 
 const Map = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<null | mapboxgl.Map>(null);
-  const [stationData, setStationData] =
-    useState<GeoJSON.FeatureCollection | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [selected, setSelected] = useState<GeoJSON.Feature | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [selectedStation, setSelectedStation] = useState<number | null>(null);
 
-  const closeModal = () => setSelected(null);
+  const closeModal = () => setSelectedStation(null);
+
+  const { data, isError, isFetching } = useQuery({
+    queryKey: ["stationsList"],
+    queryFn: fetchStations,
+  });
 
   useEffect(() => {
-    setLoading(true);
     if (!map.current) {
       map.current = new mapboxgl.Map({
         container: mapContainer.current as HTMLElement,
@@ -33,26 +35,22 @@ const Map = () => {
         center: [26.444, 65.4536],
         zoom: 5,
       });
+      map.current.on("load", () => {
+        setMapLoaded(true);
+      });
     }
-    const fetchStations = async () => {
-      try {
-        const stations = await getStations();
-        setStationData(stations);
-        setLoading(false);
-      } catch (error) {
-        setError(true);
-      }
-    };
-    map.current.on("load", () => {
-      fetchStations();
-    });
   }, []);
 
   useEffect(() => {
-    if (map.current && !map.current.getSource("tms-stations") && stationData) {
+    if (
+      map.current &&
+      mapLoaded &&
+      !map.current.getSource("tms-stations") &&
+      data
+    ) {
       map.current.addSource("tms-stations", {
         type: "geojson",
-        data: stationData,
+        data: data,
         cluster: true,
         clusterMaxZoom: 14,
         clusterRadius: 50,
@@ -68,17 +66,21 @@ const Map = () => {
       });
       map.current.on("click", "tms-point", (event) => {
         if (event.features && event.features.length > 0) {
-          setSelected(event.features[0]);
+          setSelectedStation(event.features[0].id as number);
         }
       });
     }
-  }, [stationData]);
+  }, [data, mapLoaded]);
+
+  const isMapLoading = isFetching || !mapLoaded;
 
   return (
     <>
       <div ref={mapContainer} className={styles.map} />
-      <MapModal closeModal={closeModal} station={selected} />
-      <LoadingModal loading={loading} error={error} />
+      {selectedStation && (
+        <MapModal closeModal={closeModal} stationId={selectedStation} />
+      )}
+      <LoadingModal loading={isMapLoading} error={isError} />
     </>
   );
 };

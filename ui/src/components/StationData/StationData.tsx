@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "react-bootstrap";
 import Alert from "react-bootstrap/Alert";
 import Table from "react-bootstrap/Table";
 import { getRealTimeData } from "../../services/lamService";
-import { RealTimeDataState } from "../../types";
+import { TmsStationDetails } from "../../types";
 import {
   getCollectionStatus,
   getFlowStatus,
@@ -13,30 +14,18 @@ import TrafficFlow from "../TrafficFlow/TrafficFlow";
 import styles from "./stationdata.module.scss";
 
 type StationDataProps = {
-  stationProperties: GeoJSON.GeoJsonProperties;
-  stationId: number;
+  stationProperties: TmsStationDetails;
 };
 
-const StationData = ({ stationProperties, stationId }: StationDataProps) => {
-  const [stationData, setStationData] = useState<RealTimeDataState | null>(
-    null
-  );
+const StationData = ({ stationProperties }: StationDataProps) => {
+  const { data, isError, isFetching } = useQuery({
+    queryKey: ["realTimeData", stationProperties.id],
+    queryFn: () => getRealTimeData(stationProperties.id),
+  });
 
-  const fetchData = async (id: number) => {
-    try {
-      const result = await getRealTimeData(id);
-      setStationData(parseRealtimeData(result.tmsStations[0]));
-    } catch (error) {
-      setStationData(null);
-    }
-  };
-  useEffect(() => {
-    fetchData(stationId);
-  }, []);
+  if (isError) return <></>;
 
-  if (!stationProperties) return <></>;
-
-  if (!stationData) return <Spinner animation="border" />;
+  if (!data || isFetching) return <Spinner animation="border" />;
 
   if (stationProperties.collectionStatus !== "GATHERING")
     return (
@@ -44,6 +33,8 @@ const StationData = ({ stationProperties, stationId }: StationDataProps) => {
         {getCollectionStatus(stationProperties.collectionStatus)}
       </Alert>
     );
+
+  const parsedData = parseRealtimeData(data);
 
   return (
     <>
@@ -61,22 +52,22 @@ const StationData = ({ stationProperties, stationId }: StationDataProps) => {
             <th scope="row">
               to {stationProperties.direction1Municipality || "Way 1"}
             </th>
-            <td>{stationData.passes_60.way1}</td>
-            <td>{stationData.speed_60.way1} km/h</td>
+            <td>{parsedData.passes_60.way1}</td>
+            <td>{parsedData.speed_60.way1} km/h</td>
           </tr>
           <tr>
             <th scope="row">
               to {stationProperties.direction2Municipality || "Way 2"}
             </th>
-            <td>{stationData.passes_60.way2}</td>
-            <td>{stationData.speed_60.way2} km/h</td>
+            <td>{parsedData.passes_60.way2}</td>
+            <td>{parsedData.speed_60.way2} km/h</td>
           </tr>
           <tr>
             <th scope="row">total</th>
-            <td>{stationData.passes_60.way1 + stationData.passes_60.way2}</td>
+            <td>{parsedData.passes_60.way1 + parsedData.passes_60.way2}</td>
             <td>
               {(
-                (stationData.speed_60.way1 + stationData.speed_60.way2) /
+                (parsedData.speed_60.way1 + parsedData.speed_60.way2) /
                 2
               ).toFixed(1)}{" "}
               km/h
@@ -87,11 +78,11 @@ const StationData = ({ stationProperties, stationId }: StationDataProps) => {
       <h4>Current traffic flow</h4>
       <div className={styles.trafficFlow}>
         <TrafficFlow
-          activeKey={getFlowStatus(stationData.speed_flow.way1)}
+          activeKey={getFlowStatus(parsedData.speed_flow.way1)}
           title={stationProperties.direction1Municipality || "Way 1"}
         />
         <TrafficFlow
-          activeKey={getFlowStatus(stationData.speed_flow.way2)}
+          activeKey={getFlowStatus(parsedData.speed_flow.way2)}
           title={stationProperties.direction2Municipality || "Way 2"}
         />
       </div>

@@ -11,40 +11,48 @@ import CategoryChart from "../CategoryChart/CategoryChart";
 import DataTable from "../StationData/StationData";
 import { getBadgeProps } from "../../utils";
 import styles from "./mapmodal.module.scss";
+import { useQuery } from "@tanstack/react-query";
+import { fetchStationData } from "../../services/lamService";
+import { TmsStationDetails } from "../../types";
+import { Spinner } from "react-bootstrap";
 
 type MapModalProps = {
   closeModal: () => void;
-  station: null | GeoJSON.Feature;
+  stationId: number;
 };
 
-const MapModal = ({ closeModal, station }: MapModalProps) => {
+const MapModal = ({ closeModal, stationId }: MapModalProps) => {
   const [activeTab, setActiveTab] = useState("1");
 
   const toggleTab = (tab: string | null) => {
     if (tab && activeTab !== tab) setActiveTab(tab);
   };
 
+  const { data, isError, isFetching } = useQuery({
+    queryKey: ["stationDetails", stationId],
+    queryFn: () => fetchStationData(stationId),
+  });
+
+  if (isError) return <></>;
+  if (!data && isFetching) return <Spinner animation="border" />;
+
+  const stationDetails = data?.properties as TmsStationDetails;
+
   return (
     <Modal
-      show={Boolean(station)}
+      show={true}
       onHide={closeModal}
       centered
       size="xl"
       contentClassName={styles.body}
       fullscreen="xl-down"
     >
-      <ModalHeader closeButton>
-        {station &&
-          station?.properties &&
-          JSON.parse(station.properties.names).en}
-      </ModalHeader>
+      <ModalHeader closeButton>{stationDetails.names.en}</ModalHeader>
       <div className={styles.modalBody}>
         <Tabs
           activeKey={activeTab}
           onSelect={(k) => toggleTab(k)}
           unmountOnExit={true}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           justify={true}
         >
           <Tab eventKey="1" title="Info" className={styles.tabContent}>
@@ -52,33 +60,20 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
               <Col sm="12">
                 <p>
                   <b>Road number:</b>{" "}
-                  {station && station?.properties && (
-                    <Badge
-                      {...getBadgeProps(
-                        JSON.parse(station.properties.roadAddress).roadNumber
-                      )}
-                    >
-                      {JSON.parse(station.properties.roadAddress).roadNumber}
-                    </Badge>
-                  )}
+                  <Badge
+                    {...getBadgeProps(stationDetails.roadAddress.roadNumber)}
+                  >
+                    {stationDetails.roadAddress.roadNumber}
+                  </Badge>
                 </p>
                 <p>
-                  <b>Municipality:</b>{" "}
-                  {station &&
-                    station?.properties &&
-                    station.properties.municipality}
+                  <b>Municipality:</b> {stationDetails.municipality}
                 </p>
                 <p>
-                  <b>Province:</b>{" "}
-                  {station &&
-                    station?.properties &&
-                    station.properties.province}
+                  <b>Province:</b> {stationDetails.province}
                 </p>
-                {station && station?.properties && station.id && (
-                  <DataTable
-                    stationProperties={station.properties}
-                    stationId={station.id as number}
-                  />
+                {data && stationDetails && (
+                  <DataTable stationProperties={stationDetails} />
                 )}
               </Col>
             </Row>
@@ -86,12 +81,7 @@ const MapModal = ({ closeModal, station }: MapModalProps) => {
           <Tab eventKey="2" title="Charts" className={styles.tabContent}>
             <Row>
               <Col sm="12">
-                {station && station?.properties && (
-                  <CategoryChart
-                    lam={station.properties.tmsNumber}
-                    station={station}
-                  />
-                )}
+                <CategoryChart stationProperties={stationDetails} />
               </Col>
             </Row>
           </Tab>

@@ -1,21 +1,28 @@
 import axios from "axios";
-import { TmsStationsData } from "../types";
+import { TmsData, TmsStationData } from "../types";
 
-const URL =
+const API_URL =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3001"
     : "https://app.hyytiala.fi";
 
-export const getStations = async (): Promise<GeoJSON.FeatureCollection> => {
-  const response = await axios.get(
-    "https://tie.digitraffic.fi/api/v3/metadata/tms-stations"
-  );
+const DIGITRAFFIC_API_URL = "https://tie.digitraffic.fi/api/tms/v1";
+
+export const fetchStations = async (): Promise<GeoJSON.FeatureCollection> => {
+  const response = await axios.get(`${DIGITRAFFIC_API_URL}/stations`);
   return response.data;
 };
 
-export const getRealTimeData = async (id: number): Promise<TmsStationsData> => {
+export const fetchStationData = async (
+  id: number
+): Promise<GeoJSON.Feature> => {
+  const response = await axios.get(`${DIGITRAFFIC_API_URL}/stations/${id}`);
+  return response.data;
+};
+
+export const getRealTimeData = async (id: number): Promise<TmsStationData> => {
   const response = await axios.get(
-    `https://tie.digitraffic.fi/api/v1/data/tms-data/${id}`
+    `${DIGITRAFFIC_API_URL}/stations/${id}/data`
   );
   return response.data;
 };
@@ -24,9 +31,9 @@ export const getStationData = async (
   year: string,
   lam: string,
   day: string
-) => {
+): Promise<TmsData> => {
   const response = await axios.get(
-    `${URL}/lam/api?year=${year}&lam=${lam}&day=${day}`
+    `${API_URL}/lam/api?year=${year}&lam=${lam}&day=${day}`
   );
   return response.data;
 };
