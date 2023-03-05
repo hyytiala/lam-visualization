@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { getStationData } from "../../services/lamService";
 import styles from "./categorychart.module.scss";
 import DatePicker, { registerLocale } from "react-datepicker";
@@ -7,14 +7,14 @@ import Spinner from "react-bootstrap/Spinner";
 import Table from "react-bootstrap/Table";
 import Alert from "react-bootstrap/Alert";
 import { getYear, getDayOfYear, subDays } from "date-fns";
-import { TmsData, DataState } from "../../types";
+import { TmsData, DataState, TmsStationDetails } from "../../types";
 import { getHourString } from "../../utils";
 import ReactApexChart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
+import { useQuery } from "@tanstack/react-query";
 
 type CategoryChartProps = {
-  lam: number;
-  station: GeoJSON.Feature;
+  stationProperties: TmsStationDetails;
 };
 
 const parseDate = (date: Date) => [
@@ -110,48 +110,47 @@ const pieOptions: ApexOptions = {
   },
 };
 
-const CategoryChart = ({ lam, station }: CategoryChartProps) => {
+const parseDailyData = (
+  dailyData: TmsData,
+  stationProperties: TmsStationDetails
+): DataState => {
+  const pieData = [
+    dailyData.total.cars,
+    dailyData.total.trucks,
+    dailyData.total.busses,
+  ];
+  const barData = [
+    {
+      name: `to ${stationProperties.direction1Municipality || "Way 1"}`,
+      data: dailyData.hourly.map(({ way1 }) => way1),
+    },
+    {
+      name: `to ${stationProperties.direction2Municipality || "Way 2"}`,
+      data: dailyData.hourly.map(({ way2 }) => way2),
+    },
+  ];
+  return { pie: pieData, bar: barData, speeds: dailyData.speeds };
+};
+
+const CategoryChart = ({ stationProperties }: CategoryChartProps) => {
   const [startDate, setStartDate] = useState(subDays(new Date(), 1));
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<DataState | null>(null);
-  const fetchData = async (date: Date) => {
-    const time = parseDate(date);
-    try {
-      const result: TmsData = await getStationData(
+
+  const { data, isFetching } = useQuery({
+    queryKey: ["dailyData", stationProperties.tmsNumber, startDate],
+    queryFn: async () => {
+      const time = parseDate(startDate);
+      const result = await getStationData(
         time[0],
-        String(lam),
+        String(stationProperties.tmsNumber),
         time[1]
       );
-      const pieData = [
-        result.total.cars,
-        result.total.trucks,
-        result.total.busses,
-      ];
-      const barData = [
-        {
-          name: `to ${station.properties?.direction1Municipality || "Way 1"}`,
-          data: result.hourly.map(({ way1 }) => way1),
-        },
-        {
-          name: `to ${station.properties?.direction2Municipality || "Way 2"}`,
-          data: result.hourly.map(({ way2 }) => way2),
-        },
-      ];
-      setData({ pie: pieData, bar: barData, speeds: result.speeds });
-    } catch (error) {
-      setData(null);
-    }
-    setLoading(false);
-  };
-  useEffect(() => {
-    fetchData(startDate);
-  }, []);
+      return parseDailyData(result, stationProperties);
+    },
+  });
 
   const handleDateChange = (date: Date) => {
     if (date) {
-      setLoading(true);
       setStartDate(date);
-      fetchData(date);
     }
   };
 
@@ -167,10 +166,10 @@ const CategoryChart = ({ lam, station }: CategoryChartProps) => {
         onChange={(date: Date) => handleDateChange(date)}
         maxDate={subDays(new Date(), 1)}
         minDate={new Date("2000-01-01")}
-        disabled={loading}
+        disabled={isFetching}
         className="form-control"
       />
-      {loading ? (
+      {isFetching ? (
         <Spinner animation="border" className={styles.loader} />
       ) : (
         <div className={styles.dataContent}>

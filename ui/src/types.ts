@@ -1,4 +1,5 @@
 interface Hourly {
+  hour: number;
   way1: number;
   way2: number;
 }
@@ -46,25 +47,62 @@ export interface RealTimeDataState {
 
 export interface SensorValue {
   id: number;
-  roadStationId: number;
-  name: string;
-  oldName: string;
-  shortName: string;
-  sensorValue: number;
-  sensorUnit: string;
-  timeWindowStart: string;
-  timeWindowEnd: string;
   measuredTime: string;
+  name: string;
+  shortName: string;
+  stationId: number;
+  timeWindowEnd: string;
+  timeWindowStart: string;
+  unit: string;
+  value: number;
 }
 
-export interface TmsStation {
+export interface TmsStationData {
   id: number;
   tmsNumber: number;
-  measuredTime: string;
+  dataUpdatedTime: string;
   sensorValues: SensorValue[];
 }
 
-export interface TmsStationsData {
+export interface TmsStationDetails {
+  id: number;
+  tmsNumber: number;
+  name: string;
+  collectionStatus: string;
+  state: string;
   dataUpdatedTime: string;
-  tmsStations: TmsStation[];
+  collectionInterval: number;
+  names: {
+    fi: string;
+    sv: string;
+    en: string;
+  };
+  roadAddress: {
+    roadNumber: number;
+    roadSection: number;
+    distanceFromRoadSectionStart: number;
+    carriageway: string;
+    side: string;
+    contractArea: string;
+    contractAreaCode: number;
+  };
+  liviId: string;
+  country: string;
+  startTime: string;
+  repairMaintenanceTime: string;
+  annualMaintenanceTime: string;
+  purpose: string;
+  municipality: string;
+  municipalityCode: number;
+  province: string;
+  provinceCode: number;
+  direction1Municipality: string;
+  direction1MunicipalityCode: number;
+  direction2Municipality: string;
+  direction2MunicipalityCode: number;
+  stationType: string;
+  calculatorDeviceType: string;
+  sensors: number[];
+  freeFlowSpeed1: number;
+  freeFlowSpeed2: number;
 }

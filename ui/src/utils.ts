@@ -1,5 +1,5 @@
 import { Color } from "react-bootstrap/esm/types";
-import { RealTimeDataState, TmsStation, WayData } from "./types";
+import { RealTimeDataState, TmsStationData, WayData } from "./types";
 
 export const addStatisticsToData = () => {
   return [];
@@ -27,21 +27,21 @@ export const getHourString = (hour: number): string => {
 };
 
 const parseWayData = (
-  data: TmsStation,
+  data: TmsStationData,
   way1Key: string,
   way2Key: string
 ): WayData => {
   const way1 =
-    data.sensorValues.find(({ name }) => name === way1Key)?.sensorValue ?? 0;
+    data.sensorValues.find(({ name }) => name === way1Key)?.value ?? 0;
   const way2 =
-    data.sensorValues.find(({ name }) => name === way2Key)?.sensorValue ?? 0;
+    data.sensorValues.find(({ name }) => name === way2Key)?.value ?? 0;
   return {
     way1,
     way2,
   };
 };
 
-export const parseRealtimeData = (data: TmsStation): RealTimeDataState => {
+export const parseRealtimeData = (data: TmsStationData): RealTimeDataState => {
   return {
     passes_60: parseWayData(
       data,
