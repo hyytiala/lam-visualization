@@ -22,7 +22,8 @@ router.get("/", async (req, res) => {
     const result = await getTraffic(year, lam, day);
     cache.put(cacheKey, result, CACHE_TIME);
     res.json(result);
-  } catch {
+  } catch (error) {
+    console.error(error);
     res.sendStatus(404);
   }
 });

@@ -1,7 +1,7 @@
 const axios = require("axios").default;
 const dataForge = require("data-forge");
 
-const tmsBaseUrl = "https://tie-test.digitraffic.fi/api/tms/history/raw";
+const tmsBaseUrl = "https://tie.digitraffic.fi/api/tms/v1/history/raw";
 
 const header = [
   "id",
