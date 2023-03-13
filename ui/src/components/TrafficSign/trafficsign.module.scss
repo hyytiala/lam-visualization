@@ -1,0 +1,55 @@
+.container {
+  display: block;
+  position: relative;
+  width: fit-content;
+  font-weight: bold;
+  padding: 1px;
+
+  &.blue {
+    background-color: #005eb8;
+    color: white;
+    border-color: white;
+  }
+
+  &.red {
+    background-color: #e4002b;
+    color: white;
+    border-color: white;
+  }
+  &.yellow {
+    background-color: #ffcd00;
+    color: #101820;
+    border-color: #101820;
+  }
+  &.white {
+    background-color: white;
+    color: #101820;
+    border-color: #101820;
+  }
+
+  &.no-edges {
+    padding: 0px;
+    border-radius: 6px;
+  }
+
+  &.arrow {
+    padding-right: 15.3px;
+    &::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 2px;
+      width: 0;
+      height: 0;
+      border-top: 18px solid transparent;
+      border-bottom: 18px solid transparent;
+      border-left: 18px solid;
+    }
+  }
+}
+
+.border {
+  border: 3px solid;
+  padding: 4px 12px;
+  border-radius: 6px;
+}
