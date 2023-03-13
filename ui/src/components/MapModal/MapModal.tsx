@@ -6,15 +6,15 @@ import ModalHeader from "react-bootstrap/ModalHeader";
 import ModalFooter from "react-bootstrap/ModalFooter";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
-import Badge from "react-bootstrap/Badge";
 import CategoryChart from "../CategoryChart/CategoryChart";
 import DataTable from "../StationData/StationData";
-import { getBadgeProps } from "../../utils";
+import { getRoadSignColor } from "../../utils";
 import styles from "./mapmodal.module.scss";
 import { useQuery } from "@tanstack/react-query";
 import { fetchStationData } from "../../services/lamService";
 import { TmsStationDetails } from "../../types";
-import { Spinner } from "react-bootstrap";
+import { OverlayTrigger, Spinner, Tooltip } from "react-bootstrap";
+import TrafficSign from "../TrafficSign/TrafficSign";
 
 type MapModalProps = {
   closeModal: () => void;
@@ -58,23 +58,55 @@ const MapModal = ({ closeModal, stationId }: MapModalProps) => {
           <Tab eventKey="1" title="Info" className={styles.tabContent}>
             <Row>
               <Col sm="12">
-                <p>
-                  <b>Road number:</b>{" "}
-                  <Badge
-                    {...getBadgeProps(stationDetails.roadAddress.roadNumber)}
-                  >
-                    {stationDetails.roadAddress.roadNumber}
-                  </Badge>
-                </p>
-                <p>
-                  <b>Municipality:</b> {stationDetails.municipality}
-                </p>
-                <p>
-                  <b>Province:</b> {stationDetails.province}
-                </p>
-                {data && stationDetails && (
-                  <DataTable stationProperties={stationDetails} />
-                )}
+                <div className={styles.stack}>
+                  <TrafficSign color="blue">
+                    <div className={styles.infoBox}>
+                      <div className={styles.roadRow}>
+                        <OverlayTrigger
+                          placement="top"
+                          overlay={
+                            <Tooltip id="road-number">Road number</Tooltip>
+                          }
+                          defaultShow={true}
+                        >
+                          <div>
+                            <TrafficSign
+                              color={getRoadSignColor(
+                                stationDetails.roadAddress.roadNumber
+                              )}
+                              noEdges={true}
+                            >
+                              {stationDetails.roadAddress.roadNumber}
+                            </TrafficSign>
+                          </div>
+                        </OverlayTrigger>
+                        <OverlayTrigger
+                          placement="top"
+                          overlay={
+                            <Tooltip id="municipality-name">
+                              Municipality name
+                            </Tooltip>
+                          }
+                          defaultShow={true}
+                        >
+                          <span>{stationDetails.municipality}</span>
+                        </OverlayTrigger>
+                      </div>
+                      <OverlayTrigger
+                        placement="top"
+                        overlay={
+                          <Tooltip id="province-name">Province name</Tooltip>
+                        }
+                        defaultShow={true}
+                      >
+                        <span>{stationDetails.province}</span>
+                      </OverlayTrigger>
+                    </div>
+                  </TrafficSign>
+                  {data && stationDetails && (
+                    <DataTable stationProperties={stationDetails} />
+                  )}
+                </div>
               </Col>
             </Row>
           </Tab>

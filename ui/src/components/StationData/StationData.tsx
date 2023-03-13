@@ -12,6 +12,7 @@ import {
 } from "../../utils";
 import TrafficFlow from "../TrafficFlow/TrafficFlow";
 import styles from "./stationdata.module.scss";
+import TrafficSign from "../TrafficSign/TrafficSign";
 
 type StationDataProps = {
   stationProperties: TmsStationDetails;
@@ -38,53 +39,63 @@ const StationData = ({ stationProperties }: StationDataProps) => {
 
   return (
     <>
-      <h4>Station data for latest hour</h4>
-      <Table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>vehicles</th>
-            <th>average speed</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">
-              to {stationProperties.direction1Municipality || "Way 1"}
-            </th>
-            <td>{parsedData.passes_60.way1}</td>
-            <td>{parsedData.speed_60.way1} km/h</td>
-          </tr>
-          <tr>
-            <th scope="row">
-              to {stationProperties.direction2Municipality || "Way 2"}
-            </th>
-            <td>{parsedData.passes_60.way2}</td>
-            <td>{parsedData.speed_60.way2} km/h</td>
-          </tr>
-          <tr>
-            <th scope="row">total</th>
-            <td>{parsedData.passes_60.way1 + parsedData.passes_60.way2}</td>
-            <td>
-              {(
-                (parsedData.speed_60.way1 + parsedData.speed_60.way2) /
-                2
-              ).toFixed(1)}{" "}
-              km/h
-            </td>
-          </tr>
-        </tbody>
-      </Table>
-      <h4>Current traffic flow</h4>
-      <div className={styles.trafficFlow}>
-        <TrafficFlow
-          activeKey={getFlowStatus(parsedData.speed_flow.way1)}
-          title={stationProperties.direction1Municipality || "Way 1"}
-        />
-        <TrafficFlow
-          activeKey={getFlowStatus(parsedData.speed_flow.way2)}
-          title={stationProperties.direction2Municipality || "Way 2"}
-        />
+      <div>
+        <h4>Station data for latest hour</h4>
+        <Table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>vehicles</th>
+              <th>average speed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">
+                <TrafficSign arrow={true}>
+                  {stationProperties.direction1Municipality || "Way 1"}
+                </TrafficSign>
+              </th>
+              <td>{parsedData.passes_60.way1}</td>
+              <td>{parsedData.speed_60.way1} km/h</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <TrafficSign arrow={true}>
+                  {stationProperties.direction2Municipality || "Way 2"}
+                </TrafficSign>
+              </th>
+              <td>{parsedData.passes_60.way2}</td>
+              <td>{parsedData.speed_60.way2} km/h</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <TrafficSign>Total</TrafficSign>
+              </th>
+              <td>{parsedData.passes_60.way1 + parsedData.passes_60.way2}</td>
+              <td>
+                {(
+                  (parsedData.speed_60.way1 + parsedData.speed_60.way2) /
+                  2
+                ).toFixed(1)}{" "}
+                km/h
+              </td>
+            </tr>
+          </tbody>
+        </Table>
+      </div>
+      <div>
+        <h4>Current traffic flow</h4>
+        <div className={styles.trafficFlow}>
+          <TrafficFlow
+            activeKey={getFlowStatus(parsedData.speed_flow.way1)}
+            title={stationProperties.direction1Municipality || "Way 1"}
+          />
+          <TrafficFlow
+            activeKey={getFlowStatus(parsedData.speed_flow.way2)}
+            title={stationProperties.direction2Municipality || "Way 2"}
+          />
+        </div>
       </div>
     </>
   );

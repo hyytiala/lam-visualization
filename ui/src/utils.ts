@@ -1,23 +1,22 @@
 import { Color } from "react-bootstrap/esm/types";
+import { TrafficSignColor } from "./components/TrafficSign/TrafficSign";
 import { RealTimeDataState, TmsStationData, WayData } from "./types";
 
 export const addStatisticsToData = () => {
   return [];
 };
 
-export const getBadgeProps = (
-  roadNumber: number
-): { bg: string; text?: Color } => {
-  switch (roadNumber.toString().length) {
-    case 1:
-      return { bg: "danger" };
-    case 2:
-      return { bg: "warning", text: "dark" };
-    case 3:
-      return { bg: "light", text: "dark" };
-    default:
-      return { bg: "primary" };
+export const getRoadSignColor = (roadNumber: number): TrafficSignColor => {
+  if (roadNumber < 40) {
+    return "red";
   }
+  if (roadNumber < 100) {
+    return "yellow";
+  }
+  if (roadNumber < 1000) {
+    return "white";
+  }
+  return "blue";
 };
 
 export const getHourString = (hour: number): string => {
