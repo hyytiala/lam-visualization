@@ -3,13 +3,11 @@ import ListGroup from "react-bootstrap/ListGroup";
 
 type TrafficFlowProps = {
   activeKey: number;
-  title: string;
 };
 
-const TrafficFlow = ({ activeKey, title }: TrafficFlowProps) => {
+const TrafficFlow = ({ activeKey }: TrafficFlowProps) => {
   return (
     <div>
-      <p>to {title}</p>
       <ListGroup>
         <ListGroup.Item variant="success" disabled={activeKey !== 0}>
           Fluent

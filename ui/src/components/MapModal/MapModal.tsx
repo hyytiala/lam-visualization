@@ -13,7 +13,7 @@ import styles from "./mapmodal.module.scss";
 import { useQuery } from "@tanstack/react-query";
 import { fetchStationData } from "../../services/lamService";
 import { TmsStationDetails } from "../../types";
-import { OverlayTrigger, Spinner, Tooltip } from "react-bootstrap";
+import { Spinner, Stack } from "react-bootstrap";
 import TrafficSign from "../TrafficSign/TrafficSign";
 
 type MapModalProps = {
@@ -38,6 +38,8 @@ const MapModal = ({ closeModal, stationId }: MapModalProps) => {
 
   const stationDetails = data?.properties as TmsStationDetails;
 
+  const coatOfArmsBaseUrl = "https://dd3lu7m75l6x2.cloudfront.net/images";
+
   return (
     <Modal
       show={true}
@@ -55,58 +57,45 @@ const MapModal = ({ closeModal, stationId }: MapModalProps) => {
           unmountOnExit={true}
           justify={true}
         >
-          <Tab eventKey="1" title="Info" className={styles.tabContent}>
-            <Row>
-              <Col sm="12">
-                <div className={styles.stack}>
+          <Tab eventKey="1" title="Info">
+            <Row className={styles.tabContent}>
+              <Col>
+                <h4>Station details</h4>
+                <div className={styles.detailsStack}>
+                  <span>Road</span>
+                  <TrafficSign
+                    color={getRoadSignColor(
+                      stationDetails.roadAddress.roadNumber
+                    )}
+                  >
+                    <span>{stationDetails.roadAddress.roadNumber}</span>
+                  </TrafficSign>
+                  <span>Municipality</span>
                   <TrafficSign color="blue">
-                    <div className={styles.infoBox}>
-                      <div className={styles.roadRow}>
-                        <OverlayTrigger
-                          placement="top"
-                          overlay={
-                            <Tooltip id="road-number">Road number</Tooltip>
-                          }
-                          defaultShow={true}
-                        >
-                          <div>
-                            <TrafficSign
-                              color={getRoadSignColor(
-                                stationDetails.roadAddress.roadNumber
-                              )}
-                              noEdges={true}
-                            >
-                              {stationDetails.roadAddress.roadNumber}
-                            </TrafficSign>
-                          </div>
-                        </OverlayTrigger>
-                        <OverlayTrigger
-                          placement="top"
-                          overlay={
-                            <Tooltip id="municipality-name">
-                              Municipality name
-                            </Tooltip>
-                          }
-                          defaultShow={true}
-                        >
-                          <span>{stationDetails.municipality}</span>
-                        </OverlayTrigger>
-                      </div>
-                      <OverlayTrigger
-                        placement="top"
-                        overlay={
-                          <Tooltip id="province-name">Province name</Tooltip>
-                        }
-                        defaultShow={true}
-                      >
-                        <span>{stationDetails.province}</span>
-                      </OverlayTrigger>
+                    <div className={styles.signContent}>
+                      <img
+                        src={`${coatOfArmsBaseUrl}/municipalities/${stationDetails.municipalityCode}.svg`}
+                        alt="municipality coat of arms"
+                      />
+                      <span>{stationDetails.municipality}</span>
                     </div>
                   </TrafficSign>
-                  {data && stationDetails && (
-                    <DataTable stationProperties={stationDetails} />
-                  )}
+                  <span>Province</span>
+                  <TrafficSign color="blue">
+                    <div className={styles.signContent}>
+                      <img
+                        src={`${coatOfArmsBaseUrl}/regions/${stationDetails.provinceCode}.svg`}
+                        alt="Province coat of arms"
+                      />
+                      <span>{stationDetails.province}</span>
+                    </div>
+                  </TrafficSign>
                 </div>
+              </Col>
+              <Col md={8}>
+                {data && stationDetails && (
+                  <DataTable stationProperties={stationDetails} />
+                )}
               </Col>
             </Row>
           </Tab>
