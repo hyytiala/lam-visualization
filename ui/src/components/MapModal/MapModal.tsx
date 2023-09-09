@@ -13,7 +13,7 @@ import styles from "./mapmodal.module.scss";
 import { useQuery } from "@tanstack/react-query";
 import { fetchStationData } from "../../services/lamService";
 import { TmsStationDetails } from "../../types";
-import { Spinner, Stack } from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
 import TrafficSign from "../TrafficSign/TrafficSign";
 
 type MapModalProps = {
@@ -73,20 +73,24 @@ const MapModal = ({ closeModal, stationId }: MapModalProps) => {
                   <span>Municipality</span>
                   <TrafficSign color="blue">
                     <div className={styles.signContent}>
-                      <img
-                        src={`${coatOfArmsBaseUrl}/municipalities/${stationDetails.municipalityCode}.svg`}
-                        alt="municipality coat of arms"
-                      />
+                      <div className={styles.signBg}>
+                        <img
+                          src={`${coatOfArmsBaseUrl}/municipalities/${stationDetails.municipalityCode}.svg`}
+                          alt="municipality coat of arms"
+                        />
+                      </div>
                       <span>{stationDetails.municipality}</span>
                     </div>
                   </TrafficSign>
                   <span>Province</span>
                   <TrafficSign color="blue">
                     <div className={styles.signContent}>
-                      <img
-                        src={`${coatOfArmsBaseUrl}/regions/${stationDetails.provinceCode}.svg`}
-                        alt="Province coat of arms"
-                      />
+                      <div className={styles.signBg}>
+                        <img
+                          src={`${coatOfArmsBaseUrl}/regions/${stationDetails.provinceCode}.svg`}
+                          alt="Province coat of arms"
+                        />
+                      </div>
                       <span>{stationDetails.province}</span>
                     </div>
                   </TrafficSign>
