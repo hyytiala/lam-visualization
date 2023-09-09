@@ -45,6 +45,8 @@
   }
 
   .sign-bg {
+    display: flex;
+    justify-content: center;
     background-color: white;
     padding: 2px;
     min-width: 50px;
