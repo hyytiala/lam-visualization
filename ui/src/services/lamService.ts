@@ -3,8 +3,8 @@ import { TmsData, TmsStationData } from "../types";
 
 const API_URL =
   process.env.NODE_ENV === "development"
-    ? "http://localhost:3001"
-    : "https://app.hyytiala.fi";
+    ? "http://localhost:8787"
+    : "https://api-v2.otto-hyytiala.workers.dev";
 
 const DIGITRAFFIC_API_URL = "https://tie.digitraffic.fi/api/tms/v1";
 
